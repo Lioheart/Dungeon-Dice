@@ -14,6 +14,8 @@ from PySide2.QtCore import (QCoreApplication, QMetaObject, QSize, Qt)
 from PySide2.QtGui import (QFont, QIcon, QPixmap, QPalette, QLinearGradient, QColor, QBrush)
 from PySide2.QtWidgets import QLabel, QFormLayout, QVBoxLayout, QHBoxLayout, QSizePolicy, QApplication, QWidget
 
+from src import __version__
+
 
 class Ui_About(object):
     """
@@ -45,8 +47,8 @@ class Ui_About(object):
         palette = QPalette()
 
         grad = QLinearGradient(0, 200, 600, 300)
-        grad.setColorAt(0.0, QColor(255,228,181))
-        grad.setColorAt(1.0, QColor(255,250,205))
+        grad.setColorAt(0.0, QColor(255, 228, 181))
+        grad.setColorAt(1.0, QColor(255, 250, 205))
         brush = QBrush(grad)
         palette.setBrush(QPalette.Active, QPalette.Window, brush)
         obj_about.setPalette(palette)
@@ -162,7 +164,7 @@ class Ui_About(object):
         self.lbl_python.setText(QCoreApplication.translate("About", u"Python:", None))
         self.lbl_pyside2.setText(QCoreApplication.translate("About", u"PySide2:", None))
         self.lbl_dnd.setText(QCoreApplication.translate("About", u"Wersja programu:", None))
-        self.lbl_dnd_version.setText(QCoreApplication.translate("About", u"0.0.1", None))
+        self.lbl_dnd_version.setText(QCoreApplication.translate("About", __version__, None))
         self.lbl_pyside2_version.setText(QCoreApplication.translate("About", PySide2.__version__, None))
         self.lbl_python_version.setText(QCoreApplication.translate("About", python_version(), None))
         self.lbl_stopka.setText(QCoreApplication.translate("About",

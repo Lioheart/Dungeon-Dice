@@ -1,7 +1,7 @@
 """Główne okno programu"""
 
 from PySide2.QtCore import QSize, Qt
-from PySide2.QtGui import QIcon, QFont
+from PySide2.QtGui import QIcon, QFont, QBrush, QColor, QPalette, QLinearGradient
 from PySide2.QtWidgets import QMainWindow, QAction, QWidget, QVBoxLayout, QScrollArea, QPushButton, QSizePolicy, \
     QStackedWidget
 
@@ -72,6 +72,19 @@ class MainWindow(QMainWindow):
         """
         Inicjuje wygląd UI
         """
+        # Widok
+        palette = QPalette()
+        palette.setBrush(QPalette.Normal, QPalette.Button, QBrush(QColor('#effaf3')))
+        palette.setBrush(QPalette.Inactive, QPalette.Button, QBrush(QColor('#effaf3')))
+
+        palette.setBrush(QPalette.Normal, QPalette.ButtonText, QBrush(QColor('#257942')))
+        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, QBrush(QColor(72, 199, 116)))
+
+        grad = QLinearGradient(0, 0, 0, self.size().height())
+        grad.setColorAt(0.0, QColor(255, 255, 255))
+        grad.setColorAt(1.0, QColor('#e5e5e5'))
+        palette.setBrush(QPalette.Active, QPalette.Window, QBrush(grad))
+
         # Ustawienie ikony
         icon = QIcon()
         icon.addFile('./resources/icons/dice.svg', QSize(), QIcon.Normal, QIcon.Off)
@@ -107,6 +120,7 @@ class MainWindow(QMainWindow):
         newAct.setFont(font)
 
         # Ustawianie widoku
+        stackedWidget.setPalette(palette)
         self.setCentralWidget(centralwidget)
 
         # Ustawianie akcji

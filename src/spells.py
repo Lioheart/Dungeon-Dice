@@ -2,8 +2,9 @@
 import sys
 
 from PySide2.QtCore import QSize, Qt
-from PySide2.QtGui import QIcon, QFont
-from PySide2.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextBrowser, QPushButton
+from PySide2.QtGui import QIcon, QFont, QPalette, QColor, QBrush
+from PySide2.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextBrowser, QPushButton, \
+    QGraphicsDropShadowEffect, QGraphicsScene, QGraphicsView, QLabel
 
 
 class Spells(QWidget):
@@ -29,8 +30,33 @@ class Spells(QWidget):
         """
         Inicjuje wygląd
         """
+        # Wygląd
+        palette = QPalette()
+        palette_back = QPalette()
+        shadow = QGraphicsDropShadowEffect(self)
+        shadow.setBlurRadius(15)
+        shadow.setOffset(0, 0)
+        palette.setBrush(QPalette.Active, QPalette.Window, QBrush(QColor(250, 250, 250, 128)))
+
+        # Przyciski nieaktywne
+        palette.setBrush(QPalette.Disabled, QPalette.Button, QBrush(QColor(241, 70, 104, 0)))
+        palette.setBrush(QPalette.Disabled, QPalette.ButtonText, QBrush(QColor(255, 255, 255, 255)))
+
+        # Przyciski aktywne
+        palette.setBrush(QPalette.Active, QPalette.Button, QBrush(QColor(238, 246, 252)))
+        palette.setBrush(QPalette.Inactive, QPalette.Button, QBrush(QColor(255, 255, 255)))
+
+        palette.setBrush(QPalette.Active, QPalette.ButtonText, QBrush(QColor(29, 114, 170)))
+        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, QBrush(QColor(54, 54, 54, 128)))
+
+        # Przyciski cofania
+        palette_back.setBrush(QPalette.Active, QPalette.ButtonText, QBrush(QColor(0, 0, 0, 178)))
+        palette_back.setBrush(QPalette.Inactive, QPalette.ButtonText, QBrush(QColor(0, 0, 0, 50)))
+
+        palette_back.setBrush(QPalette.Active, QPalette.Button, QBrush(QColor('#ffdd57')))
+        palette_back.setBrush(QPalette.Inactive, QPalette.Button, QBrush(QColor('#fff8de')))
+
         # Widzety
-        # shadow = QGraphicsDropShadowEffect()
         btn_back = QPushButton('Cofnij do menu')
         icon = QIcon()
 
@@ -40,6 +66,10 @@ class Spells(QWidget):
         hbox = QHBoxLayout()
 
         # Ustawianie widgetów
+        self.setPalette(palette)
+        self.text_desc.setGraphicsEffect(shadow)
+        self.btn_subback.setPalette(palette_back)
+        btn_back.setPalette(palette_back)
         font = QFont()
         font.setFamily('Krub')
         font.setBold(True)
@@ -218,7 +248,34 @@ class Spells(QWidget):
         self.text_desc.setText('Meduzy, driady, harpie...')
 
 
+#
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = Spells()
     sys.exit(app.exec_())
+
+# class Graphics(QWidget):
+#     def __init__(self):
+#         super(Graphics, self).__init__()
+#
+#         layout = QVBoxLayout(self)
+#
+#         shad = QGraphicsDropShadowEffect(self)
+#         shad.setBlurRadius(5)
+#
+#         # self.view = QLabel('Shadow')
+#         # self.view.setGraphicsEffect(shad)
+#
+#         self.view = QPushButton('Shadow')
+#         self.view.setGraphicsEffect(shad)
+#
+#
+#
+#         layout.addWidget(self.view)
+#
+# if __name__ == "__main__":
+#     app = QApplication([])
+#     main = Graphics()
+#     main.show()
+#     main.raise_()
+#     app.exec_()

@@ -1,15 +1,10 @@
 """Modele tablic w bazie dla D&D 3.5"""
 import datetime
-import os
 
-from sqlalchemy import Column, Integer, String, Date, Table, ForeignKey, DateTime, TIMESTAMP, create_engine
+from sqlalchemy import Column, Integer, String, DateTime, create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-
-import sqlalchemy as db
 
 from config import DATABASE_URI
-from src import basedir
 
 engine = create_engine(DATABASE_URI)
 Base = declarative_base()

@@ -2,7 +2,7 @@
 
 <p align="center">
   <br>
-  <a href="https://github.com/Lioheart/"><img src="https://github.com/Lioheart/Dungeon-Dice/resources/icons/dice.png
+  <a href="https://github.com/Lioheart/"><img src="https://raw.githubusercontent.com/Lioheart/Dungeon-Dice/master/resources/icons/dice.svg
   " alt="Dungeon Dice" width="400"></a>
   <br>
 </p>
@@ -18,12 +18,11 @@ Program zawierający w sobie spis wszystkich zaklęć z Podręcznika Gracza D&D 
 * [Licencja](#licencja)
 
 ## Informacje
-[![Build Status](https://travis-ci.org/Lioheart/Dungeon-Dice.svg?branch=master)](https://travis-ci.org/Lioheart/DnD)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/Lioheart/Dungeon-Dice.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Lioheart/DnD/alerts/)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Lioheart/Dungeon-Dice.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Lioheart/DnD/context:python)
+[![Build Status](https://travis-ci.org/Lioheart/Dungeon-Dice.svg?branch=master)](https://travis-ci.org/Lioheart/Dungeon-Dice)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/Lioheart/Dungeon-Dice.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Lioheart/Dungeon-Dice/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Lioheart/Dungeon-Dice.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Lioheart/Dungeon-Dice/context:python)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Lioheart/Dungeon-Dice)
 [![Requirements Status](https://requires.io/github/Lioheart/Dungeon-Dice/requirements.svg?branch=master)](https://requires.io/github/Lioheart/Dungeon-Dice/requirements/?branch=master)
-![GitHub](https://img.shields.io/github/license/Lioheart/Dungeon-Dice)
 
 Program ten w przyszłości będzie zaiwerał spis zaklęć z Podręcznika Gracza oraz wszystkich dodatków, jakie wyszły w
  wersji polskiej. Dodatkowo, będzie można przyjrzeć się wszystkim magicznym przedmiotom, umiejętnościom, klasom
@@ -41,13 +40,13 @@ Aby uruchomić projekt, wykonaj poniższe polecenia:
 ```
 $ git clone https://github.com/Lioheart/Dungeon-Dice.git
 $ cd Dungeon-Dice
-$ pip install virtualenv
+# pip install virtualenv
 $ python -m venv venv
 $ virtualenv venv
 $ source venv/bin/activate              - Linux and Mac
-$ Set-ExecutionPolicy RemoteSigned      - Windows
+# Set-ExecutionPolicy RemoteSigned      - Windows
 $ venv\Scripts\activate                 - Windows
-$ Set-ExecutionPolicy Restricted        - Windows
+# Set-ExecutionPolicy Restricted        - Windows
 $ pip install -r requirements.txt
 ```
 
