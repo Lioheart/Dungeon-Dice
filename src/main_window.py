@@ -11,7 +11,7 @@ from src.spells import Spells
 
 class MenuWidget(QWidget):
     """
-    Klasa Menu
+    Klasa Menu - wybór odpowiednich funkcji w głównym oknie
     """
 
     def __init__(self):
@@ -97,7 +97,7 @@ class MainWindow(QMainWindow):
         self.setFont(font)
 
         # Widgety
-        window = Spells()
+        spells_widget = Spells()
         menu_widget = MenuWidget()
         centralwidget = QWidget(self)
         stackedWidget = QStackedWidget(centralwidget)
@@ -114,7 +114,7 @@ class MainWindow(QMainWindow):
         # Ustawianie kontrolek
         verticalLayout.addWidget(stackedWidget)
         stackedWidget.addWidget(menu_widget)
-        stackedWidget.addWidget(window)
+        stackedWidget.addWidget(spells_widget)
         stackedWidget.setCurrentIndex(0)
         viewMenu.addAction(newAct)
         newAct.setFont(font)

@@ -1,3 +1,6 @@
+"""
+Moduł rozruchowy. Zawiera funkcję uruchamiającą główne okno
+"""
 import os
 import sys
 
@@ -6,7 +9,11 @@ from PySide2.QtWidgets import QApplication, QStyleFactory
 
 from src.main_window import MainWindow
 
+
 def run():
+    """
+    Uruchamia główne okno aplikacji QT, ustawia styl na Fusion oraz wczytuje wszystkie czcionki z folderu fonts
+    """
     app = QApplication(sys.argv)
     app.setStyle(QStyleFactory.create('Fusion'))
 

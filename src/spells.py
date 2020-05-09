@@ -1,10 +1,14 @@
 """Menu Księgi Zaklęć"""
+import queue
 import sys
+import threading
 
 from PySide2.QtCore import QSize, Qt
 from PySide2.QtGui import QIcon, QFont, QPalette, QColor, QBrush
 from PySide2.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextBrowser, QPushButton, \
-    QGraphicsDropShadowEffect, QGraphicsScene, QGraphicsView, QLabel
+    QGraphicsDropShadowEffect
+
+from compress_txt import gzip_read
 
 
 class Spells(QWidget):
@@ -81,6 +85,8 @@ class Spells(QWidget):
         btn_back.setIcon(icon)
         # TODO usuń to po wprowadzeniu odpowiednich wartości w bazie danych
         self.btn_list.setEnabled(False)
+        self.text_desc.setContentsMargins(40, 40, 40, 40)
+        self.text_desc.setFixedSize(800, 480)
 
         # Ustawianie widoków
         self.widget_switch()
@@ -106,7 +112,7 @@ class Spells(QWidget):
 
     def widget_switch(self):
         """
-        Wyświetla przyciski w Layoucie menu
+        Wyświetla główne przyciski w Layoucie menu
         """
         self.vbox_child.addWidget(self.btn_list)
         self.vbox_child.addWidget(self.btn_class)
@@ -118,14 +124,14 @@ class Spells(QWidget):
 
     def clear_layout(self):
         """
-        Czyści Layuot menu z niepotrzebnych widgetów
+        Czyści Layuot menu z wszystkich widgetów
         """
         for i in reversed(range(self.vbox_child.count())):
             self.vbox_child.itemAt(i).widget().setParent(None)
 
     def subback(self):
         """
-        Odpowiada za funkcję powrotu do podmenu Księgi czarów
+        Odpowiada za funkcję powrotu do menu Księgi czarów
         """
         self.clear_layout()
         self.text_desc.setText('')
@@ -230,7 +236,9 @@ class Spells(QWidget):
 
         self.submenu_create(btn_div1, btn_div2, btn_div3)
 
-        self.text_desc.setText('Kapłani, druidzi, doświadczeni paladyni...')
+        text = gzip_read(outfilename='./resources/descriptions/zdolnosci_specjalne.txt.gz')
+        print(text)
+        self.text_desc.setText(text)
 
     def power(self):
         """
@@ -245,37 +253,15 @@ class Spells(QWidget):
 
         self.submenu_create(btn_pow1, btn_pow2, btn_pow3, btn_pow4)
 
-        self.text_desc.setText('Meduzy, driady, harpie...')
+        que = queue.Queue()
+        x = threading.Thread(target=gzip_read, args=(que, './resources/descriptions/zdolnosci_specjalne.txt.gz'))
+        x.start()  # Rozpoczyna wątek
+        x.join()  # Kończy wątek. Aby sprawdzić wystarczy x.is_alive()
+        text = que.get()
+        self.text_desc.setHtml(text)
 
 
-#
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = Spells()
     sys.exit(app.exec_())
-
-# class Graphics(QWidget):
-#     def __init__(self):
-#         super(Graphics, self).__init__()
-#
-#         layout = QVBoxLayout(self)
-#
-#         shad = QGraphicsDropShadowEffect(self)
-#         shad.setBlurRadius(5)
-#
-#         # self.view = QLabel('Shadow')
-#         # self.view.setGraphicsEffect(shad)
-#
-#         self.view = QPushButton('Shadow')
-#         self.view.setGraphicsEffect(shad)
-#
-#
-#
-#         layout.addWidget(self.view)
-#
-# if __name__ == "__main__":
-#     app = QApplication([])
-#     main = Graphics()
-#     main.show()
-#     main.raise_()
-#     app.exec_()
