@@ -64,4 +64,4 @@ Projekt w fazie Alfa.
 ## Licencja
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-<div>Icons made by <a href="https://www.flaticon.com/authors/fjstudio" title="fjstudio">fjstudio</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+<div>Icons from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>

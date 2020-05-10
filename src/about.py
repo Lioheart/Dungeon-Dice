@@ -42,6 +42,7 @@ class Ui_About(object):
     def setupUi(self, obj_about, path_svg):
         """
         Inicjalizuje wygląd okna
+        :param path_svg: domyślna ścieżka
         :param obj_about: QWidget
         """
         palette = QPalette()
@@ -156,7 +157,6 @@ class Ui_About(object):
         :param obj_about: QWidget
         """
         obj_about.setWindowTitle(QCoreApplication.translate("About", u"O mnie...", None))
-        self.lbl_icon.setText("")
         self.lbl_tytul.setText(QCoreApplication.translate("About", u"Dungeon Dice", None))
         self.lbl_opis.setText(QCoreApplication.translate("About",
                                                          u"Program zawieraj\u0105cy opis wszystkich zakl\u0119\u0107 do D&D edycji 3.5",
