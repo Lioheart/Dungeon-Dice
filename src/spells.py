@@ -1,9 +1,14 @@
 """Menu Księgi Zaklęć"""
+import queue
 import sys
+import threading
 
 from PySide2.QtCore import QSize, Qt
-from PySide2.QtGui import QIcon, QFont
-from PySide2.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextBrowser, QPushButton
+from PySide2.QtGui import QIcon, QFont, QPalette, QColor, QBrush
+from PySide2.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextBrowser, QPushButton, \
+    QGraphicsDropShadowEffect
+
+from compress_txt import gzip_read
 
 
 class Spells(QWidget):
@@ -29,8 +34,33 @@ class Spells(QWidget):
         """
         Inicjuje wygląd
         """
+        # Wygląd
+        palette = QPalette()
+        palette_back = QPalette()
+        shadow = QGraphicsDropShadowEffect(self)
+        shadow.setBlurRadius(15)
+        shadow.setOffset(0, 0)
+        palette.setBrush(QPalette.Active, QPalette.Window, QBrush(QColor(250, 250, 250, 128)))
+
+        # Przyciski nieaktywne
+        palette.setBrush(QPalette.Disabled, QPalette.Button, QBrush(QColor(241, 70, 104, 0)))
+        palette.setBrush(QPalette.Disabled, QPalette.ButtonText, QBrush(QColor(255, 255, 255, 255)))
+
+        # Przyciski aktywne
+        palette.setBrush(QPalette.Active, QPalette.Button, QBrush(QColor(238, 246, 252)))
+        palette.setBrush(QPalette.Inactive, QPalette.Button, QBrush(QColor(255, 255, 255)))
+
+        palette.setBrush(QPalette.Active, QPalette.ButtonText, QBrush(QColor(29, 114, 170)))
+        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, QBrush(QColor(54, 54, 54, 128)))
+
+        # Przyciski cofania
+        palette_back.setBrush(QPalette.Active, QPalette.ButtonText, QBrush(QColor(0, 0, 0, 178)))
+        palette_back.setBrush(QPalette.Inactive, QPalette.ButtonText, QBrush(QColor(0, 0, 0, 50)))
+
+        palette_back.setBrush(QPalette.Active, QPalette.Button, QBrush(QColor('#ffdd57')))
+        palette_back.setBrush(QPalette.Inactive, QPalette.Button, QBrush(QColor('#fff8de')))
+
         # Widzety
-        # shadow = QGraphicsDropShadowEffect()
         btn_back = QPushButton('Cofnij do menu')
         icon = QIcon()
 
@@ -40,17 +70,24 @@ class Spells(QWidget):
         hbox = QHBoxLayout()
 
         # Ustawianie widgetów
+        self.description_thread('../resources/descriptions/magic_descr.txt.gz')
+        btn_back.setFixedWidth(280)
+        self.setPalette(palette)
+        self.text_desc.setGraphicsEffect(shadow)
+        self.btn_subback.setPalette(palette_back)
+        btn_back.setPalette(palette_back)
         font = QFont()
         font.setFamily('Krub')
         font.setBold(True)
         self.btn_subback.setFont(font)
         btn_back.setFont(font)
-        icon.addFile('./resources/icons/undo-alt-solid.svg', QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile('../resources/icons/undo-alt-solid.svg', QSize(), QIcon.Normal, QIcon.Off)
         self.btn_subback.setIcon(icon)
-        icon.addFile('./resources/icons/arrow-left-solid.svg', QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile('../resources/icons/arrow-left-solid.svg', QSize(), QIcon.Normal, QIcon.Off)
         btn_back.setIcon(icon)
         # TODO usuń to po wprowadzeniu odpowiednich wartości w bazie danych
         self.btn_list.setEnabled(False)
+        self.text_desc.setViewportMargins(10, 10, 10, 10)
 
         # Ustawianie widoków
         self.widget_switch()
@@ -76,7 +113,7 @@ class Spells(QWidget):
 
     def widget_switch(self):
         """
-        Wyświetla przyciski w Layoucie menu
+        Wyświetla główne przyciski w Layoucie menu
         """
         self.vbox_child.addWidget(self.btn_list)
         self.vbox_child.addWidget(self.btn_class)
@@ -88,17 +125,17 @@ class Spells(QWidget):
 
     def clear_layout(self):
         """
-        Czyści Layuot menu z niepotrzebnych widgetów
+        Czyści Layuot menu z wszystkich widgetów
         """
         for i in reversed(range(self.vbox_child.count())):
             self.vbox_child.itemAt(i).widget().setParent(None)
 
     def subback(self):
         """
-        Odpowiada za funkcję powrotu do podmenu Księgi czarów
+        Odpowiada za funkcję powrotu do menu Księgi czarów
         """
         self.clear_layout()
-        self.text_desc.setText('')
+        self.description_thread('../resources/descriptions/magic_descr.txt.gz')
         self.widget_switch()
 
     def submenu_create(self, *buttons):
@@ -128,7 +165,7 @@ class Spells(QWidget):
 
         self.submenu_create(btn_cls1, btn_cls2, btn_cls3, btn_cls4, btn_cls5, btn_cls6, btn_cls7)
 
-        self.text_desc.setText('Na początku tego rozdziału...')
+        self.description_thread('../resources/descriptions/classes_spells.txt.gz')
 
     def magic(self):
         """
@@ -148,7 +185,7 @@ class Spells(QWidget):
 
         self.submenu_create(btn_mag1, btn_mag2, btn_mag3, btn_mag4, btn_mag5, btn_mag6, btn_mag7, btn_mag8, btn_mag9)
 
-        self.text_desc.setText('Rzucanie czarów to taki sam proces...')
+        self.description_thread('../resources/descriptions/magic.txt.gz')
 
     def description(self):
         """
@@ -172,7 +209,12 @@ class Spells(QWidget):
         self.submenu_create(btn_desc1, btn_desc2, btn_desc3, btn_desc4, btn_desc5, btn_desc6, btn_desc7, btn_desc8,
                             btn_desc9, btn_desc10, btn_desc11, btn_desc12)
 
-        self.text_desc.setText('Listy czarów dostępne bohaterom...')
+        self.text_desc.setText(
+            '''
+            <p>Listy czarów dostępne bohaterom oraz opisy zaklęć zaprezentowano w ten sam sposób,
+            a każdą kategorię informacji wyjaśniono i zdefiniowano odpowiednio.</p>
+            '''
+        )
 
     def arcane(self):
         """
@@ -186,7 +228,7 @@ class Spells(QWidget):
 
         self.submenu_create(btn_arc1, btn_arc2, btn_arc3)
 
-        self.text_desc.setText('Czarodzieje, zaklinacze oraz bardowie...')
+        self.description_thread('../resources/descriptions/arcane.txt.gz')
 
     def divine(self):
         """
@@ -200,7 +242,7 @@ class Spells(QWidget):
 
         self.submenu_create(btn_div1, btn_div2, btn_div3)
 
-        self.text_desc.setText('Kapłani, druidzi, doświadczeni paladyni...')
+        self.description_thread('../resources/descriptions/divine.txt.gz')
 
     def power(self):
         """
@@ -215,7 +257,19 @@ class Spells(QWidget):
 
         self.submenu_create(btn_pow1, btn_pow2, btn_pow3, btn_pow4)
 
-        self.text_desc.setText('Meduzy, driady, harpie...')
+        self.description_thread('../resources/descriptions/power.txt.gz')
+
+    def description_thread(self, path):
+        """
+        Wykonuje odczyt opisu danego podrozdziału z pliku, w osobnym wątku
+        :param path: ścieżka do pliku z opisem
+        """
+        que = queue.Queue()
+        x = threading.Thread(target=gzip_read, args=(que, path))
+        x.start()  # Rozpoczyna wątek
+        x.join()  # Kończy wątek. Aby sprawdzić wystarczy x.is_alive()
+        text = que.get()
+        self.text_desc.setHtml(text)
 
 
 if __name__ == '__main__':

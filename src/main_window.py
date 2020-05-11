@@ -1,17 +1,18 @@
 """Główne okno programu"""
 
 from PySide2.QtCore import QSize, Qt
-from PySide2.QtGui import QIcon, QFont
+from PySide2.QtGui import QIcon, QFont, QBrush, QColor, QPalette, QLinearGradient
 from PySide2.QtWidgets import QMainWindow, QAction, QWidget, QVBoxLayout, QScrollArea, QPushButton, QSizePolicy, \
     QStackedWidget
 
 from src.about import Ui_About
+from src.licence import Licence
 from src.spells import Spells
 
 
 class MenuWidget(QWidget):
     """
-    Klasa Menu
+    Klasa Menu - wybór odpowiednich funkcji w głównym oknie
     """
 
     def __init__(self):
@@ -36,7 +37,7 @@ class MenuWidget(QWidget):
         font.setFamily('Krub')
         font.setBold(True)
         font.setPointSize(16)
-        icon.addFile('./resources/icons/spellbook.svg', QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile('../resources/icons/spellbook.svg', QSize(), QIcon.Normal, QIcon.Off)
 
         btn_spells.setMinimumSize(QSize(0, 72))
         btn_spells.setSizePolicy(sizePolicy)
@@ -64,6 +65,7 @@ class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.about_widget = QWidget()
+        self.licence = Licence()
         self.setWindowTitle("Dungeon Dice")
         self.verticalLayout = QVBoxLayout(self)
         self.initUI()
@@ -72,9 +74,22 @@ class MainWindow(QMainWindow):
         """
         Inicjuje wygląd UI
         """
+        # Widok
+        palette = QPalette()
+        palette.setBrush(QPalette.Normal, QPalette.Button, QBrush(QColor('#effaf3')))
+        palette.setBrush(QPalette.Inactive, QPalette.Button, QBrush(QColor('#effaf3')))
+
+        palette.setBrush(QPalette.Normal, QPalette.ButtonText, QBrush(QColor('#257942')))
+        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, QBrush(QColor(72, 199, 116)))
+
+        grad = QLinearGradient(0, 0, 0, self.size().height())
+        grad.setColorAt(0.0, QColor(255, 255, 255))
+        grad.setColorAt(1.0, QColor('#e5e5e5'))
+        palette.setBrush(QPalette.Active, QPalette.Window, QBrush(grad))
+
         # Ustawienie ikony
         icon = QIcon()
-        icon.addFile('./resources/icons/dice.svg', QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile('../resources/icons/dice.svg', QSize(), QIcon.Normal, QIcon.Off)
         self.setWindowIcon(icon)
 
         # Ustawienie fontu
@@ -84,7 +99,7 @@ class MainWindow(QMainWindow):
         self.setFont(font)
 
         # Widgety
-        window = Spells()
+        spells_widget = Spells()
         menu_widget = MenuWidget()
         centralwidget = QWidget(self)
         stackedWidget = QStackedWidget(centralwidget)
@@ -95,26 +110,31 @@ class MainWindow(QMainWindow):
         # Kontrolki
         menubar = self.menuBar()
         viewMenu = menubar.addMenu('O mnie...')
-        newAct = QAction('O mnie', self)
+        act_licence = QAction('Licencja otwartej gry', self)
+        act_about = QAction('O mnie', self)
         menubar.setFont(font)
 
         # Ustawianie kontrolek
         verticalLayout.addWidget(stackedWidget)
         stackedWidget.addWidget(menu_widget)
-        stackedWidget.addWidget(window)
+        stackedWidget.addWidget(spells_widget)
         stackedWidget.setCurrentIndex(0)
-        viewMenu.addAction(newAct)
-        newAct.setFont(font)
+        viewMenu.addAction(act_licence)
+        viewMenu.addAction(act_about)
+        act_about.setFont(font)
+        act_licence.setFont(font)
 
         # Ustawianie widoku
+        stackedWidget.setPalette(palette)
         self.setCentralWidget(centralwidget)
 
         # Ustawianie akcji
-        newAct.triggered.connect(self.about)
+        act_about.triggered.connect(self.about)
+        act_licence.triggered.connect(lambda: self.licence.show())
 
     def about(self):
         """
         Metoda ta otwiera okienko O mnie
         """
-        Ui_About(self.about_widget, './resources/icons/dice.svg')
+        Ui_About(self.about_widget, '../resources/icons/dice.svg')
         self.about_widget.show()
