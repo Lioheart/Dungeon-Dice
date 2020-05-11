@@ -14,5 +14,5 @@ __description__ = "Lista zaklęć z settingu D&D 3.5."
 
 # Zmienia główny folder z nadrzędnego na src
 # Wymaga .. zamiast . przy podawaniu ścieżki
-basedir = os.path.dirname(os.path.realpath(__file__))
-os.chdir(basedir)
+# basedir = os.path.dirname(os.path.realpath(__file__))
+# os.chdir(basedir)

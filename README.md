@@ -31,7 +31,6 @@ Program ten w przyszłości będzie zaiwerał spis zaklęć z Podręcznika Gracz
 ## Technologie
 Projekt jest tworzony z wykorzystaniem technologii:
 * PySide2
-* lorem
 	
 ## Setup
 Aby uruchomić projekt, wykonaj poniższe polecenia:

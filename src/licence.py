@@ -1,6 +1,8 @@
 """Licencja Otwartej Gry"""
+import os
 import queue
 import threading
+from os.path import normpath, join
 
 from PySide2.QtCore import QSize
 from PySide2.QtGui import QFont, QIcon
@@ -31,11 +33,11 @@ class Licence(QWidget):
         # Ustawienie Widgetów
         font.setFamily('Baloo 2')
         font.setPointSize(12)
-        icon.addFile('../resources/icons/dice.svg', QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile('./resources/icons/dice.svg', QSize(), QIcon.Normal, QIcon.Off)
         self.setFont(font)
         txt_browser.setFont(font)
         que = queue.Queue()
-        x = threading.Thread(target=gzip_read, args=(que, '../resources/descriptions/licence.txt.gz'))
+        x = threading.Thread(target=gzip_read, args=(que, './resources/descriptions/licence.txt.gz'))
         x.start()  # Rozpoczyna wątek
         x.join()  # Kończy wątek. Aby sprawdzić wystarczy x.is_alive()
         text = que.get()
@@ -48,6 +50,8 @@ class Licence(QWidget):
 
 
 if __name__ == '__main__':
+    os.chdir(normpath(join(os.getcwd(), '..\\')))
+
     import sys
 
     app = QApplication(sys.argv)

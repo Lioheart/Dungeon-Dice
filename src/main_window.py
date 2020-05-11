@@ -37,7 +37,7 @@ class MenuWidget(QWidget):
         font.setFamily('Krub')
         font.setBold(True)
         font.setPointSize(16)
-        icon.addFile('../resources/icons/spellbook.svg', QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile('./resources/icons/spellbook.svg', QSize(), QIcon.Normal, QIcon.Off)
 
         btn_spells.setMinimumSize(QSize(0, 72))
         btn_spells.setSizePolicy(sizePolicy)
@@ -89,7 +89,7 @@ class MainWindow(QMainWindow):
 
         # Ustawienie ikony
         icon = QIcon()
-        icon.addFile('../resources/icons/dice.svg', QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile('./resources/icons/dice.svg', QSize(), QIcon.Normal, QIcon.Off)
         self.setWindowIcon(icon)
 
         # Ustawienie fontu
@@ -136,5 +136,5 @@ class MainWindow(QMainWindow):
         """
         Metoda ta otwiera okienko O mnie
         """
-        Ui_About(self.about_widget, '../resources/icons/dice.svg')
+        Ui_About(self.about_widget, './resources/icons/dice.svg')
         self.about_widget.show()
