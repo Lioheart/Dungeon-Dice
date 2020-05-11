@@ -3,9 +3,9 @@ import json
 import queue
 import threading
 import urllib.request
+import webbrowser
 
 from PySide2.QtCore import QTimer
-from pywin.Demos.ocx import webbrowser
 
 import src
 from notifications import NotificationWindow

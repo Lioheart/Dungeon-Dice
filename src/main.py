@@ -20,7 +20,7 @@ def run():
     update()
 
     fontDB = QFontDatabase()
-    for root, dirs, files in os.walk(os.path.join(os.getcwd(), '..\\resources\\fonts')):
+    for root, dirs, files in os.walk(os.path.join(os.getcwd(), '.\\resources\\fonts')):
         for filename in files:
             fontDB.addApplicationFont(os.path.join(root, filename))
 

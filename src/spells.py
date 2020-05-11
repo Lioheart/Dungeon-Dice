@@ -1,7 +1,9 @@
 """Menu Księgi Zaklęć"""
+import os
 import queue
 import sys
 import threading
+from os.path import normpath, join
 
 from PySide2.QtCore import QSize, Qt
 from PySide2.QtGui import QIcon, QFont, QPalette, QColor, QBrush
@@ -70,7 +72,7 @@ class Spells(QWidget):
         hbox = QHBoxLayout()
 
         # Ustawianie widgetów
-        self.description_thread('../resources/descriptions/magic_descr.txt.gz')
+        self.description_thread('./resources/descriptions/magic_descr.txt.gz')
         btn_back.setFixedWidth(280)
         self.setPalette(palette)
         self.text_desc.setGraphicsEffect(shadow)
@@ -81,9 +83,9 @@ class Spells(QWidget):
         font.setBold(True)
         self.btn_subback.setFont(font)
         btn_back.setFont(font)
-        icon.addFile('../resources/icons/undo-alt-solid.svg', QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile('./resources/icons/undo-alt-solid.svg', QSize(), QIcon.Normal, QIcon.Off)
         self.btn_subback.setIcon(icon)
-        icon.addFile('../resources/icons/arrow-left-solid.svg', QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile('./resources/icons/arrow-left-solid.svg', QSize(), QIcon.Normal, QIcon.Off)
         btn_back.setIcon(icon)
         # TODO usuń to po wprowadzeniu odpowiednich wartości w bazie danych
         self.btn_list.setEnabled(False)
@@ -135,7 +137,7 @@ class Spells(QWidget):
         Odpowiada za funkcję powrotu do menu Księgi czarów
         """
         self.clear_layout()
-        self.description_thread('../resources/descriptions/magic_descr.txt.gz')
+        self.description_thread('./resources/descriptions/magic_descr.txt.gz')
         self.widget_switch()
 
     def submenu_create(self, *buttons):
@@ -165,7 +167,7 @@ class Spells(QWidget):
 
         self.submenu_create(btn_cls1, btn_cls2, btn_cls3, btn_cls4, btn_cls5, btn_cls6, btn_cls7)
 
-        self.description_thread('../resources/descriptions/classes_spells.txt.gz')
+        self.description_thread('./resources/descriptions/classes_spells.txt.gz')
 
     def magic(self):
         """
@@ -185,7 +187,7 @@ class Spells(QWidget):
 
         self.submenu_create(btn_mag1, btn_mag2, btn_mag3, btn_mag4, btn_mag5, btn_mag6, btn_mag7, btn_mag8, btn_mag9)
 
-        self.description_thread('../resources/descriptions/magic.txt.gz')
+        self.description_thread('./resources/descriptions/magic.txt.gz')
 
     def description(self):
         """
@@ -228,7 +230,7 @@ class Spells(QWidget):
 
         self.submenu_create(btn_arc1, btn_arc2, btn_arc3)
 
-        self.description_thread('../resources/descriptions/arcane.txt.gz')
+        self.description_thread('./resources/descriptions/arcane.txt.gz')
 
     def divine(self):
         """
@@ -242,7 +244,7 @@ class Spells(QWidget):
 
         self.submenu_create(btn_div1, btn_div2, btn_div3)
 
-        self.description_thread('../resources/descriptions/divine.txt.gz')
+        self.description_thread('./resources/descriptions/divine.txt.gz')
 
     def power(self):
         """
@@ -257,7 +259,7 @@ class Spells(QWidget):
 
         self.submenu_create(btn_pow1, btn_pow2, btn_pow3, btn_pow4)
 
-        self.description_thread('../resources/descriptions/power.txt.gz')
+        self.description_thread('./resources/descriptions/power.txt.gz')
 
     def description_thread(self, path):
         """
@@ -273,6 +275,7 @@ class Spells(QWidget):
 
 
 if __name__ == '__main__':
+    os.chdir(normpath(join(os.getcwd(), '..\\')))
     app = QApplication(sys.argv)
     ex = Spells()
     sys.exit(app.exec_())
