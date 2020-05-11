@@ -1,3 +1,6 @@
+"""
+Inicjalizacja wstępnych parametrów
+"""
 import os.path
 
 __author__ = "Jakub Hawro"

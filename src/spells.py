@@ -70,11 +70,8 @@ class Spells(QWidget):
         hbox = QHBoxLayout()
 
         # Ustawianie widgetów
-<<<<<<< Updated upstream
-=======
         self.description_thread('../resources/descriptions/magic_descr.txt.gz')
         btn_back.setFixedWidth(280)
->>>>>>> Stashed changes
         self.setPalette(palette)
         self.text_desc.setGraphicsEffect(shadow)
         self.btn_subback.setPalette(palette_back)
@@ -90,12 +87,7 @@ class Spells(QWidget):
         btn_back.setIcon(icon)
         # TODO usuń to po wprowadzeniu odpowiednich wartości w bazie danych
         self.btn_list.setEnabled(False)
-<<<<<<< Updated upstream
-        self.text_desc.setContentsMargins(40, 40, 40, 40)
-        self.text_desc.setFixedSize(800, 480)
-=======
         self.text_desc.setViewportMargins(10, 10, 10, 10)
->>>>>>> Stashed changes
 
         # Ustawianie widoków
         self.widget_switch()
@@ -250,13 +242,7 @@ class Spells(QWidget):
 
         self.submenu_create(btn_div1, btn_div2, btn_div3)
 
-<<<<<<< Updated upstream
-        text = gzip_read(outfilename='./resources/descriptions/zdolnosci_specjalne.txt.gz')
-        print(text)
-        self.text_desc.setText(text)
-=======
         self.description_thread('../resources/descriptions/divine.txt.gz')
->>>>>>> Stashed changes
 
     def power(self):
         """
@@ -271,10 +257,6 @@ class Spells(QWidget):
 
         self.submenu_create(btn_pow1, btn_pow2, btn_pow3, btn_pow4)
 
-<<<<<<< Updated upstream
-        que = queue.Queue()
-        x = threading.Thread(target=gzip_read, args=(que, './resources/descriptions/zdolnosci_specjalne.txt.gz'))
-=======
         self.description_thread('../resources/descriptions/power.txt.gz')
 
     def description_thread(self, path):
@@ -284,7 +266,6 @@ class Spells(QWidget):
         """
         que = queue.Queue()
         x = threading.Thread(target=gzip_read, args=(que, path))
->>>>>>> Stashed changes
         x.start()  # Rozpoczyna wątek
         x.join()  # Kończy wątek. Aby sprawdzić wystarczy x.is_alive()
         text = que.get()

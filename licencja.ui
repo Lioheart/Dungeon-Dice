@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>About</class>
+ <widget class="QWidget" name="About">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>840</width>
+    <height>1188</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Baloo 2</family>
+    <pointsize>11</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Licencja Otwartej Gry</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>resources/dice.svg</normaloff>resources/dice.svg</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QTextBrowser" name="txt_browser">
+     <property name="font">
+      <font>
+       <family>Baloo 2</family>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::HLine</enum>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Baloo 2','Baloo 2'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;h1 style=&quot; margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:xx-large; font-weight:600;&quot;&gt;Licencja Otwartej Gry&lt;/span&gt;&lt;/h1&gt;
+&lt;h3 style=&quot; margin-top:14px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:large; font-weight:600;&quot;&gt;Wersja 1.0a PL&lt;/span&gt;&lt;/h3&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Poniższy tekst jest własnością Wizards of the Coast, Inc, Copyright 2000 Wizards of the Coast, Inc (&amp;quot;Wizards&amp;quot;). Wszystkie prawa zastrzeżone. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;1. Określenia: (a) &amp;quot;Udzielający&amp;quot; oznacza właściciela praw autorskich i/lub znaków towarowych, który przyczynia się do tworzenia Otwartej Zawartości Gry; (b) &amp;quot;Materiały Pochodne&amp;quot; oznacza materiały objęte prawami autorskimi, włączając w to opracowania i tłumaczenia (w tym na języki komputerowe), cytaty, modyfikacje, korektę, dodatki, rozszerzenia, uaktualnienia, ulepszenia, kompilacje, skróty lub inne formy w jakich istniejące dzieło może być ponownie opublikowane, adaptowane lub zmienione; (c) &amp;quot;Dystrybucja”&amp;quot; oznacza reprodukcję, udzielenie licencji, najem, użyczenie, sprzedaż, emisją, wystawienie na widok publiczny, transmisję lub innego rodzaju dystrybucję; (d) &amp;quot;Otwarta Zawartość Gry&amp;quot; oznacza mechanikę gry, włączając w to metody, procesy i procedury w takim zakresie, że nie zawierają Tożsamości Produktu i są rozszerzeniem wcześniejszego dzieła i wszelkiej dodatkowej zawartości jednoznacznie określonej przez Udzielającego, jako Otwarta Zawartość Gry i oznaczająca każde dzieło objęte tą Licencją, włączając w to tłumaczenia i Materiały Pochodne chronione prawem autorskim, lecz wyłączając Tożsamość Produktu. (e) &amp;quot;Tożsamość Produktu&amp;quot; oznacza nazwę, logo i znaki szczególne w tym szatę graficznąproduktu lub serii produktów; artefakty, stworzenia, postacie, opowieści, scenariusze, fabułę, elementy tematyczne, dialogi, wydarzenia, języki, ilustracje, symbole, wzory, wyobrażenia, podobizny, formaty, pozy, pomysły, motywy oraz graficzne, fotograficzne i inne zobrazowania graficzne lub dźwiękowe; imiona i opisy postaci; nazwy i opisy czarów, efektów magicznych, schematów zachowań, drużyn, ważnych osobistości, podobieństw, specjalnych umiejętności, miejsc, lokacji, środowiska, stworzeń, wyposażenia, magicznych i nadnaturalnych zdolności lub efektów, logo, symboli lub projektów graficznych; i wszystkie inne Znaki Towarowe lub Zastrzeżone Znaki Towarowe jasno określone jako Tożsamość Produktu, przez ich właściciela, za wyjątkiem Otwartej Zawartości Gry. (f) &amp;quot;Znak Towarowy&amp;quot; oznacza logo, nazwy, znaki, motto, układ graficzny wykorzystywany przez Udzielającego do identyfikacji siebie, lub swoich produktów lub powiązanych produktów stworzonych przez Udzielającego według zasad Licencji Otwartej Gry. (g) &amp;quot;Użytek&amp;quot;, &amp;quot;Użyty&amp;quot; lub &amp;quot;Używanie&amp;quot; oznacza użytkowanie, dystrybucję, kopiowanie, edytowanie, formatowanie, modyfikowanie, tłumaczenie lub w jakikolwiek inny sposób wytwarzanie Materiałów Pochodnych według zasad Licencji Otwartej Gry. (h) &amp;quot;Ty&amp;quot;, &amp;quot;Twój&amp;quot; i inne odwołania w drugiej osobie liczby pojedynczej oznaczają licencjobiorcę w rozumieniu tej umowy. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;2. Licencja: Ta Licencja dotyczy każdego fragmentu Otwartej Zawartości Gry, który zawiera informację, wskazującą, że Otwarta Zawartość Gry może byćużyta tylko na warunkach tej Licencji. Musisz załączyć taką informację do każdego fragmentu Otwartej Zawartości Gry, którego Używasz. Nie można dodawać ani ujmowaćżadnych postanowień do i z niniejszej Licencji, oprócz możliwości wymienionych w Licencji. Żadne inne warunki i postanowienia nie mogą się odnosić do Otwartej Zawartości Gry rozpowszechnianej na zasadach tej Licencji. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;3. Oferta i akceptacja: Używając Otwartej Zawartości Gry stwierdzasz, że akceptujesz warunki niniejszej Licencji. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;4. Zapewnienia i postanowienia: W zamian za akceptację używania tej Licencji, Licencjodawca zapewnia Ci wieczystą, ogólnoświatową, wolną od tantiem, niewyłączną licencję o postanowieniach niniejszej Licencji na Używanie Otwartej Zawartości Gry. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;5. Oświadczenie o prawie do udzielenia Licencji: Jeżeli publikujesz własne, oryginalne materiały jako Otwartą Zawartość Gry stwierdzasz, że Twój wkład jest Twoim wytworem i/lub masz prawo do zapewnienia praw gwarantowanych przez niniejszą Licencję. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;6. Informacja o Prawach Autorskich: Jesteś zobowiązany uaktualniać INFORMACJĘ O PRAWACH AUTORSKICH, tak by zawierała dokładny tekst INFORMACJI O PRAWACH AUTORSKICH każdego fragmentu Otwartej Zawartości Gry, który kopiujesz, modyfikujesz, lub dystrybuujesz, musisz także dodać tytuł, datę praw autorskich i nazwę właściciela praw autorskich do Informacji o Prawach Autorskich, dla każdego fragmentu Otwartej Zawartości Gry, którą dystrybuujesz. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;7. Używanie Tożsamości Produktu: Zobowiązujesz się do nieużywania żadnej części Tożsamości Produktu, włączając w to wskazanie zgodności, chyba że na podstawie odrębnej umowy licencyjnej z właścicielem każdego z elementów Tożsamości Produktu. Zobowiązujesz się nie wskazywać zgodności lub powiązań z żadnym Znakiem Towarowym ani Znakiem Handlowym w połączeniu z dziełem zawierającym Otwartą Zawartość Gry, chyba że na podstawie odrębnej umowy licencyjnej z właścicielem takiego Znaku Towarowego lub Znaku Handlowego. Użycie którejkolwiek z Tożsamości Produktu w Otwartej Zawartości Gry nie stanowi naruszenia własności danej Tożsamości Produktu. Właściciel Tożsamości Produktu wykorzystanej w Otwartej Zawartości Gry zachowuje pełne prawa, tytuły i korzyści do i z Tożsamości Produktu. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;8. Identyfikacja: Jeżeli dystrybuujesz Otwartą Zawartość Gry musisz jasno określić jaka część pracy przez ciebie dystrybuowanej jest Otwartą ZawartościąGry. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;9. Uaktualnienie Licencji: Wizards lub jej określeni Przedstawiciele, mogą publikować uaktualnione wersje niniejszej Licencji. Możesz używać każdej autoryzowanej wersji tej Licencji do kopiowania, modyfikacji i dystrybucji każdej Otwartej Zawartości Gry, oryginalnie dystrybuowanej na niniejszej Licencji w dowolnej jej wersji. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;10. Kopia Licencji: Jesteś ZOBOWIĄZANY dystrybuować kopię niniejszej Licencji z każdą kopią Otwartej Zawartości Gry. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;11. Użycie danych Udzielającego: Nie możesz wykorzystywać nazwy lub nazwiska żadnego z Udzielających do Wprowadzenia na rynek ani Reklamy Otwartej Zawartości Gry, chyba że posiadasz na to pisemną zgodę Udzielającego. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;12. Niemożność wywiązania się: Jeżeli nie jesteś w stanie wywiązać się z któregokolwiek warunku niniejszej Licencji w stosunku do Otwartej Zawartości Gry, ze względu na ustawę, rozporządzenie lub wyrok sądu, nie możesz Używać Otwartej Zawartości Gry której dotyczy. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;13. Przerwanie: Niniejsza Licencja zostaje automatycznie cofnięta jeżeli któryś z warunków w niej zawartych zostanie naruszony, a uchybienie nie zostanie naprawione w ciągu 30 dni od stwierdzenia naruszenia. Wszystkie sublicencje działają nadal po zerwaniu niniejszej Licencji. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;14. Przystosowanie: Jeżeli którekolwiek z postanowień niniejszej Licencji jest niemożliwe do zastosowania, takie postanowienie powinno zostaćprzystosowane, lecz tylko w granicach koniecznych dla zapewnienia stosowalności. &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;15. INFORMACJA O PRAWACH AUTORSKICH Open Game License v 1.0a Copyright 2000, Wizards of the Coast, Inc. System Reference Document Copyright 2000-2003, Wizards of the Coast, Inc.; Authors Jonathan Tweet, Monte Cook, Skip Williams, Rich Baker, Andy Collins, David Noonan, Rich Redman, Bruce R. Cordell, John D. Rateliff, Thomas Reid, James Wyatt, based on original material by E. Gary Gygax and Dave Arneson.&lt;br /&gt;Dungeon Dice Copyright 2020, Hawro Jakub. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

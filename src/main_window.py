@@ -6,6 +6,7 @@ from PySide2.QtWidgets import QMainWindow, QAction, QWidget, QVBoxLayout, QScrol
     QStackedWidget
 
 from src.about import Ui_About
+from src.licence import Licence
 from src.spells import Spells
 
 
@@ -64,6 +65,7 @@ class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.about_widget = QWidget()
+        self.licence = Licence()
         self.setWindowTitle("Dungeon Dice")
         self.verticalLayout = QVBoxLayout(self)
         self.initUI()
@@ -108,7 +110,8 @@ class MainWindow(QMainWindow):
         # Kontrolki
         menubar = self.menuBar()
         viewMenu = menubar.addMenu('O mnie...')
-        newAct = QAction('O mnie', self)
+        act_licence = QAction('Licencja otwartej gry', self)
+        act_about = QAction('O mnie', self)
         menubar.setFont(font)
 
         # Ustawianie kontrolek
@@ -116,15 +119,18 @@ class MainWindow(QMainWindow):
         stackedWidget.addWidget(menu_widget)
         stackedWidget.addWidget(spells_widget)
         stackedWidget.setCurrentIndex(0)
-        viewMenu.addAction(newAct)
-        newAct.setFont(font)
+        viewMenu.addAction(act_licence)
+        viewMenu.addAction(act_about)
+        act_about.setFont(font)
+        act_licence.setFont(font)
 
         # Ustawianie widoku
         stackedWidget.setPalette(palette)
         self.setCentralWidget(centralwidget)
 
         # Ustawianie akcji
-        newAct.triggered.connect(self.about)
+        act_about.triggered.connect(self.about)
+        act_licence.triggered.connect(lambda: self.licence.show())
 
     def about(self):
         """

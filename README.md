@@ -2,8 +2,7 @@
 
 <p align="center">
   <br>
-  <a href="https://github.com/Lioheart/"><img src="https://raw.githubusercontent.com/Lioheart/Dungeon-Dice/master/resources/icons/dice.svg
-  " alt="Dungeon Dice" width="400"></a>
+  <img src="https://raw.githubusercontent.com/Lioheart/Dungeon-Dice/master/resources/icons/dice.svg" alt="Dungeon Dice" width="400">
   <br>
 </p>
 

@@ -7,6 +7,7 @@ import sys
 from PySide2.QtGui import QFontDatabase
 from PySide2.QtWidgets import QApplication, QStyleFactory
 
+from check_state import update, donate
 from src.main_window import MainWindow
 
 
@@ -16,6 +17,7 @@ def run():
     """
     app = QApplication(sys.argv)
     app.setStyle(QStyleFactory.create('Fusion'))
+    update()
 
     fontDB = QFontDatabase()
     for root, dirs, files in os.walk(os.path.join(os.getcwd(), '..\\resources\\fonts')):
@@ -25,4 +27,6 @@ def run():
     window = MainWindow()
     window.setMinimumSize(1280, 720)
     window.show()
+
+    donate()
     app.exec_()
