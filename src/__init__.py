@@ -1,14 +1,13 @@
 """
 Inicjalizacja wstępnych parametrów
 """
-import os.path
 
 __author__ = "Jakub Hawro"
 __copyright__ = "Copyright 2020-2020 Jakub Hawro (The Compiler)"
 __license__ = "MIT"
 __maintainer__ = __author__
 __email__ = "caco7.lioheart@gmail.com"
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __version_info__ = tuple(int(part) for part in __version__.split('.'))
 __description__ = "Lista zaklęć z settingu D&D 3.5."
 

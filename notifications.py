@@ -114,11 +114,7 @@ class NotificationItem(QWidget):
         self._timer.start(6000)
 
     def doClose(self):
-        try:
-            # 可能由于手动点击导致item已经被删除了
-            self.closed.emit(self.item)
-        except:
-            pass
+        self.closed.emit(self.item)
 
     def showAnimation(self, width):
         # 显示动画
@@ -182,10 +178,9 @@ class NotificationWindow(QListWidget):
         # 删除item
         w = self.itemWidget(item)
         self.removeItemWidget(item)
-        item = self.takeItem(self.indexFromItem(item).row())
+        self.takeItem(self.indexFromItem(item).row())
         w.close()
         w.deleteLater()
-        del item
 
     @classmethod
     def _createInstance(cls):

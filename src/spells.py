@@ -9,6 +9,7 @@ from PySide2.QtCore import QSize, Qt
 from PySide2.QtGui import QIcon, QFont, QPalette, QColor, QBrush
 from PySide2.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextBrowser, QPushButton, \
     QGraphicsDropShadowEffect
+from bs4 import BeautifulSoup
 
 from compress_txt import gzip_read
 
@@ -147,8 +148,6 @@ class Spells(QWidget):
         """
         self.vbox_child.addWidget(self.btn_subback)
         for btn in buttons:
-            # TODO usuń to po wprowadzeniu odpowiednich wartości w bazie danych
-            btn.setDisabled(True)
             self.vbox_child.addWidget(btn)
 
     def classes_spells(self):
@@ -230,7 +229,11 @@ class Spells(QWidget):
 
         self.submenu_create(btn_arc1, btn_arc2, btn_arc3)
 
-        self.description_thread('./resources/descriptions/arcane.txt.gz')
+        btn_arc1.clicked.connect(lambda: self.description_thread('./resources/descriptions/arcane.txt.gz', 'btn1'))
+        btn_arc2.clicked.connect(lambda: self.description_thread('./resources/descriptions/arcane.txt.gz', 'btn2'))
+        btn_arc3.clicked.connect(lambda: self.description_thread('./resources/descriptions/arcane.txt.gz', 'btn3'))
+
+        self.description_thread('./resources/descriptions/arcane.txt.gz', 'description')
 
     def divine(self):
         """
@@ -244,7 +247,14 @@ class Spells(QWidget):
 
         self.submenu_create(btn_div1, btn_div2, btn_div3)
 
-        self.description_thread('./resources/descriptions/divine.txt.gz')
+        btn_div1.clicked.connect(
+            lambda: self.description_thread('./resources/descriptions/divine.txt.gz', 'btn1'))
+        btn_div2.clicked.connect(
+            lambda: self.description_thread('./resources/descriptions/divine.txt.gz', 'btn2'))
+        btn_div3.clicked.connect(
+            lambda: self.description_thread('./resources/descriptions/divine.txt.gz', 'btn3'))
+
+        self.description_thread('./resources/descriptions/divine.txt.gz', 'description')
 
     def power(self):
         """
@@ -252,16 +262,11 @@ class Spells(QWidget):
         """
         self.clear_layout()
 
-        btn_pow1 = QPushButton('Zdolności czaropodobne')
-        btn_pow2 = QPushButton('Zdolności nadnaturalne')
-        btn_pow3 = QPushButton('Zdolności nadzwyczajne')
-        btn_pow4 = QPushButton('Zdolności naturalne')
-
-        self.submenu_create(btn_pow1, btn_pow2, btn_pow3, btn_pow4)
+        self.submenu_create()
 
         self.description_thread('./resources/descriptions/power.txt.gz')
 
-    def description_thread(self, path):
+    def description_thread(self, path, bs_id=None):
         """
         Wykonuje odczyt opisu danego podrozdziału z pliku, w osobnym wątku
         :param path: ścieżka do pliku z opisem
@@ -271,6 +276,9 @@ class Spells(QWidget):
         x.start()  # Rozpoczyna wątek
         x.join()  # Kończy wątek. Aby sprawdzić wystarczy x.is_alive()
         text = que.get()
+        if bs_id:
+            soup = BeautifulSoup(text, 'html.parser')  # make soup that is parse-able by bs
+            text = str(soup.find('div', id=bs_id))
         self.text_desc.setHtml(text)
 
 

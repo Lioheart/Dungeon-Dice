@@ -60,11 +60,16 @@ def gzip_read(q=None, outfilename='example.txt.gz'):
     :return: tekst źródłowy
     :param outfilename: nazwa pliku
     """
-    with gzip.open(outfilename, 'rb') as input_file:
-        with io.TextIOWrapper(input_file, encoding='utf-8') as dec:
-            if q:
-                q.put(dec.read())
-            return dec.read()
+    try:
+        with gzip.open(outfilename, 'rb') as input_file:
+            with io.TextIOWrapper(input_file, encoding='utf-8') as dec:
+                if q:
+                    q.put(dec.read())
+                return dec.read()
+    except FileNotFoundError:
+        if q:
+            q.put('Nie znaleziono pliku!')
+        return 'Nie znaleziono pliku!'
 
 
 if __name__ == '__main__':
