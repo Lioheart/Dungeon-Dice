@@ -26,6 +26,9 @@ __Version__ = 1.0
 
 
 class NotificationIcon:
+    """
+    Odpowiada za ikony notyfikacji
+    """
     Info, Success, Warning, Error, Close = range(5)
     Types = {
         Info: None,
@@ -37,6 +40,9 @@ class NotificationIcon:
 
     @classmethod
     def init(cls):
+        """
+        Inicjalizuje proces
+        """
         cls.Types[cls.Info] = QPixmap(QImage.fromData(base64.b64decode(
             'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAC5ElEQVRYR8VX0VHbQBB9e/bkN3QQU0FMBSEVYFcQ8xPBJLJ1FWAqOMcaxogfTAWQCiAVRKkgTgfmM4zRZu6QhGzL0p0nDPr17e7bt7tv14RX/uiV48MJgAon+8TiAMRtMFogaqUJxADPwRRzg67kl8+xbWJWANR40iPQSSFgtX/mGQkaDr56V3VAKgGos4s2JXwJoF3naMPvMS+SrpTHs032GwGkdF+DsFMVnJm/oyGGeHico0EjIjpYes+YMyVd6R/flfkpBWCCQ9zaZM2LZDfLMGXsZ5kdI/lYBmINgHHyyLd1mWdBbAFAM/GY7K2WYx1AeB4T6L1N9umbGxZ0qktATaEAdCps48D39oq/LwEw3U5CN92LfczJoewfT7MAywDCaEbAuxeLrh0zz4L+0e4aAJfGy+sP3IMxlH1vpMJoSMCJDXgWtJeJVc6ACs9HBBrYODCJAFdYvAmkPJxnNqMwYht7Bn+T/lGg3z4DGEd3RPhQ54DBvwAOVkeqagRXfTLjh+x7+8sALOtfHLuiYzWOAiLoKbD58mnIGbCmLxUepS6NQmYlUGE0JeCTTXT9JvA9E9sZgO5iIpoyc6/YzcqSwQzgGgBXB7oXpH9klpRSkxY1xW/b7Iu2zk34PILPnazCqEPAtTWA8iZ0HsOu9L0bw4DzCJeNocMGNDpQ3IKO+6NUiJ4ysZNiBv5I3zPnmJmG5oM+wbS+9+qkvGi7NAXGmeUy0ioofa+XA0jH0UaMKpdRWs/adcwMqfV/tenqpqHY/Znt+j2gJi00RUzA201dXaxh9iZdZloJS+9H1otrkbRrD5InFqpPskxEshJQ468CkSmJC+i1HigaaxCAuCljgoDhwPdOjf7rFVxxuJrMkXScjtKc1rOLNpJk6nii5XmYzbngzlZn+RIb40kPJPTBYXUt6VEDJ8Pi6bWpNFb/jFYY6YGpDeKdjBmTKdMcxDGEmP73v2a2Gr/NOycGtglQZ/MPzEqCMLGckJEAAAAASUVORK5CYII=')))
         cls.Types[cls.Success] = QPixmap(QImage.fromData(base64.b64decode(
@@ -50,27 +56,35 @@ class NotificationIcon:
 
     @classmethod
     def icon(cls, ntype):
+        """
+        Metoda odpowiedzialna za wybranie odpowiedniej ikony
+        :param ntype:
+        :return: ikona
+        """
         return cls.Types.get(ntype)
 
 
 class NotificationItem(QWidget):
+    """
+    Klasa reprezentująca pojedynczy dymek
+    """
     closed = Signal(QListWidgetItem)
 
     def __init__(self, title, message, item, *args, ntype=0, callback=None, **kwargs):
         super(NotificationItem, self).__init__(*args, **kwargs)
         self.item = item
         self.callback = callback
-        layout = QHBoxLayout(self, spacing=0)
-        layout.setContentsMargins(0, 0, 0, 0)
+        lhbox = QHBoxLayout(self, spacing=0)
+        lhbox.setContentsMargins(0, 0, 0, 0)
         self.bgWidget = QWidget(self)  # 背景控件, 用于支持动画效果
-        layout.addWidget(self.bgWidget)
+        lhbox.addWidget(self.bgWidget)
 
-        layout = QGridLayout(self.bgWidget)
-        layout.setHorizontalSpacing(15)
-        layout.setVerticalSpacing(10)
+        lgbox = QGridLayout(self.bgWidget)
+        lgbox.setHorizontalSpacing(15)
+        lgbox.setVerticalSpacing(10)
 
         # 标题左边图标
-        layout.addWidget(
+        lgbox.addWidget(
             QLabel(self, pixmap=NotificationIcon.icon(ntype)), 0, 0)
 
         # 标题
@@ -93,11 +107,11 @@ class NotificationItem(QWidget):
         self.labelMessage.adjustSize()
 
         # 添加到布局
-        layout.addWidget(self.labelTitle, 0, 1)
-        layout.addItem(QSpacerItem(
+        lgbox.addWidget(self.labelTitle, 0, 1)
+        lgbox.addItem(QSpacerItem(
             40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum), 0, 2)
-        layout.addWidget(self.labelClose, 0, 3)
-        layout.addWidget(self.labelMessage, 1, 1, 1, 2)
+        lgbox.addWidget(self.labelClose, 0, 3)
+        lgbox.addWidget(self.labelMessage, 1, 1, 1, 2)
 
         # 边框阴影
         effect = QGraphicsDropShadowEffect(self)
@@ -111,21 +125,15 @@ class NotificationItem(QWidget):
         # 5秒自动关闭
         self._timer = QTimer(self, timeout=self.doClose)
         self._timer.setSingleShot(True)  # 只触发一次
-        self._timer.start(6000)
+        self._timer.start(12000)
 
     def doClose(self):
-        try:
-            # 可能由于手动点击导致item已经被删除了
-            self.closed.emit(self.item)
-        except:
-            pass
+        self.closed.emit(self.item)
 
     def showAnimation(self, width):
-        # 显示动画
         pass
 
     def closeAnimation(self):
-        # 关闭动画
         pass
 
     def mousePressEvent(self, event):
@@ -153,6 +161,9 @@ class NotificationItem(QWidget):
 
 
 class NotificationWindow(QListWidget):
+    """
+    Klasa odpowiedznialna za wyswietlanie listy powiadomień
+    """
     _instance = None
 
     def __init__(self, *args, **kwargs):
@@ -161,9 +172,7 @@ class NotificationWindow(QListWidget):
         self.setMinimumWidth(412)
         self.setMaximumWidth(412)
         # QApplication.instance().setQuitOnLastWindowClosed(True)
-        # 隐藏任务栏,无边框,置顶等
-        self.setWindowFlags(self.windowFlags() | Qt.Tool |
-                            Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(self.windowFlags() | Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         # 去掉窗口边框
         self.setFrameShape(self.NoFrame)
         # 背景透明
@@ -182,10 +191,9 @@ class NotificationWindow(QListWidget):
         # 删除item
         w = self.itemWidget(item)
         self.removeItemWidget(item)
-        item = self.takeItem(self.indexFromItem(item).row())
+        self.takeItem(self.indexFromItem(item).row())
         w.close()
         w.deleteLater()
-        del item
 
     @classmethod
     def _createInstance(cls):

@@ -9,6 +9,7 @@ from PySide2.QtCore import QSize, Qt
 from PySide2.QtGui import QIcon, QFont, QPalette, QColor, QBrush
 from PySide2.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextBrowser, QPushButton, \
     QGraphicsDropShadowEffect
+from bs4 import BeautifulSoup
 
 from compress_txt import gzip_read
 
@@ -87,7 +88,7 @@ class Spells(QWidget):
         self.btn_subback.setIcon(icon)
         icon.addFile('./resources/icons/arrow-left-solid.svg', QSize(), QIcon.Normal, QIcon.Off)
         btn_back.setIcon(icon)
-        # TODO usuń to po wprowadzeniu odpowiednich wartości w bazie danych
+        # TODO usuń to po wprowadzeniu odpowiednich wartości czarów w bazie danych
         self.btn_list.setEnabled(False)
         self.text_desc.setViewportMargins(10, 10, 10, 10)
 
@@ -147,8 +148,6 @@ class Spells(QWidget):
         """
         self.vbox_child.addWidget(self.btn_subback)
         for btn in buttons:
-            # TODO usuń to po wprowadzeniu odpowiednich wartości w bazie danych
-            btn.setDisabled(True)
             self.vbox_child.addWidget(btn)
 
     def classes_spells(self):
@@ -173,6 +172,7 @@ class Spells(QWidget):
         """
         Odpowiada za wyświetlenie menu funkcjonowania czarów
         """
+        path = './resources/descriptions/magic.txt.gz'
         self.clear_layout()
 
         btn_mag1 = QPushButton('Funkcjonowanie czarowania')
@@ -185,14 +185,16 @@ class Spells(QWidget):
         btn_mag8 = QPushButton('Specjalne efekty czarów')
         btn_mag9 = QPushButton('Łączenie efektów magicznych')
 
-        self.submenu_create(btn_mag1, btn_mag2, btn_mag3, btn_mag4, btn_mag5, btn_mag6, btn_mag7, btn_mag8, btn_mag9)
+        self.create_btn_connect(path, btn_mag1, btn_mag2, btn_mag3, btn_mag4, btn_mag5, btn_mag6, btn_mag7, btn_mag8,
+                                btn_mag9)
 
-        self.description_thread('./resources/descriptions/magic.txt.gz')
+        self.description_thread(path, 'description')
 
     def description(self):
         """
         Odpowiada za wyświetlenie menu opisu zaklęć
         """
+        path = './resources/descriptions/desc_magic.txt.gz'
         self.clear_layout()
 
         btn_desc1 = QPushButton('Nazwa')
@@ -208,8 +210,8 @@ class Spells(QWidget):
         btn_desc11 = QPushButton('Odporność na czary')
         btn_desc12 = QPushButton('Opis działania')
 
-        self.submenu_create(btn_desc1, btn_desc2, btn_desc3, btn_desc4, btn_desc5, btn_desc6, btn_desc7, btn_desc8,
-                            btn_desc9, btn_desc10, btn_desc11, btn_desc12)
+        self.create_btn_connect(path, btn_desc1, btn_desc2, btn_desc3, btn_desc4, btn_desc5, btn_desc6, btn_desc7,
+                                btn_desc8, btn_desc9, btn_desc10, btn_desc11, btn_desc12)
 
         self.text_desc.setText(
             '''
@@ -222,48 +224,58 @@ class Spells(QWidget):
         """
         Odpowiada za wyświetlenie menu opisu zaklęć wtajemniczeń
         """
+        path = './resources/descriptions/arcane.txt.gz'
         self.clear_layout()
 
         btn_arc1 = QPushButton('Jak czarodziej przygotowuje zaklęcia')
         btn_arc2 = QPushButton('Magiczne zapiski wtajemniczeń')
         btn_arc3 = QPushButton('Zaklinacze i bardowie')
 
-        self.submenu_create(btn_arc1, btn_arc2, btn_arc3)
+        self.create_btn_connect(path, btn_arc1, btn_arc2, btn_arc3)
 
-        self.description_thread('./resources/descriptions/arcane.txt.gz')
+        self.description_thread(path, 'description')
 
     def divine(self):
         """
         Odpowiada za wyświetlenie menu opisu zakleć objawień
         """
+        path = './resources/descriptions/divine.txt.gz'
         self.clear_layout()
 
         btn_div1 = QPushButton('Jak przygotowuje się zaklęcia objawień')
         btn_div2 = QPushButton('Magiczne zapiski objawień')
         btn_div3 = QPushButton('Nowe czary objawień')
 
-        self.submenu_create(btn_div1, btn_div2, btn_div3)
-
-        self.description_thread('./resources/descriptions/divine.txt.gz')
+        self.create_btn_connect(path, btn_div1, btn_div2, btn_div3)
+        self.description_thread(path, 'description')
 
     def power(self):
         """
         Odpowiada za wyświetlenie menu zdolności specjalnych
         """
+        path = './resources/descriptions/power.txt.gz'
         self.clear_layout()
 
-        btn_pow1 = QPushButton('Zdolności czaropodobne')
-        btn_pow2 = QPushButton('Zdolności nadnaturalne')
-        btn_pow3 = QPushButton('Zdolności nadzwyczajne')
-        btn_pow4 = QPushButton('Zdolności naturalne')
+        self.submenu_create()
 
-        self.submenu_create(btn_pow1, btn_pow2, btn_pow3, btn_pow4)
+        self.description_thread(path)
 
-        self.description_thread('./resources/descriptions/power.txt.gz')
+    def create_btn_connect(self, path, *args):
+        """
+        Służy do utworzenia odpowiednich powiązań z przyciskami podmenu. Wymaga ścieżki do pliku z danym opisem
+        oraz argumentów w postaci przycisków QPushButton
+        :param path: ścieżka do pliku z opisem
+        :param args: przyciski QPushButton
+        """
+        self.submenu_create(*args)
+        for i, val in enumerate(args):
+            y = 'btn' + str(i + 1)
+            val.pressed.connect(lambda x=y: self.description_thread(path, x))
 
-    def description_thread(self, path):
+    def description_thread(self, path, bs_id=None):
         """
         Wykonuje odczyt opisu danego podrozdziału z pliku, w osobnym wątku
+        :param bs_id: id div
         :param path: ścieżka do pliku z opisem
         """
         que = queue.Queue()
@@ -271,6 +283,9 @@ class Spells(QWidget):
         x.start()  # Rozpoczyna wątek
         x.join()  # Kończy wątek. Aby sprawdzić wystarczy x.is_alive()
         text = que.get()
+        if bs_id:
+            soup = BeautifulSoup(text, 'html.parser')  # make soup that is parse-able by bs
+            text = str(soup.find('div', id=bs_id))
         self.text_desc.setHtml(text)
 
 
