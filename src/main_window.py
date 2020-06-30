@@ -5,6 +5,7 @@ from PySide2.QtGui import QIcon, QFont, QBrush, QColor, QPalette, QLinearGradien
 from PySide2.QtWidgets import QMainWindow, QAction, QWidget, QVBoxLayout, QScrollArea, QPushButton, QSizePolicy, \
     QStackedWidget
 
+from check_state import updating
 from src.about import Ui_About
 from src.licence import Licence
 from src.spells import Spells
@@ -112,6 +113,7 @@ class MainWindow(QMainWindow):
         viewMenu = menubar.addMenu('O mnie...')
         act_licence = QAction('Licencja otwartej gry', self)
         act_about = QAction('O mnie', self)
+        act_update = QAction('Sprawdź dostępność aktualizacji', self)
         menubar.setFont(font)
 
         # Ustawianie kontrolek
@@ -120,9 +122,11 @@ class MainWindow(QMainWindow):
         stackedWidget.addWidget(spells_widget)
         stackedWidget.setCurrentIndex(0)
         viewMenu.addAction(act_licence)
+        viewMenu.addAction(act_update)
         viewMenu.addAction(act_about)
         act_about.setFont(font)
         act_licence.setFont(font)
+        act_update.setFont(font)
 
         # Ustawianie widoku
         stackedWidget.setPalette(palette)
@@ -130,6 +134,7 @@ class MainWindow(QMainWindow):
 
         # Ustawianie akcji
         act_about.triggered.connect(self.about)
+        act_update.triggered.connect(updating)
         act_licence.triggered.connect(lambda: self.licence.show())
 
     def about(self):

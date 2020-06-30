@@ -4,6 +4,7 @@ import queue
 import threading
 import urllib.request
 import webbrowser
+from urllib import error
 
 from PySide2.QtCore import QTimer
 
@@ -28,22 +29,27 @@ def donate():
     QTimer.singleShot(1200000, lambda: NotificationWindow.info(title, text, callback=_open_browser))
 
 
-def getResponse(q=None, url=None):
+def get_response(q=None, url=None):
     """
     Zwraca plik JSON
     :param q: zmienna, do której przypisane zostanie wynik zwrotny
     :param url: ścieżka do API
     :return: JSON
     """
-    operUrl = urllib.request.urlopen(url)
+    try:
+        operUrl = urllib.request.urlopen(url)
+    except error.URLError or error.HTTPError:
+        return False
+
     if operUrl.getcode() == 200:
         data = operUrl.read()
         jsonData = json.loads(data)
     else:
-        print("Error receiving data", operUrl.getcode())
+        # print("Error receiving data", operUrl.getcode())
         jsonData = None
     if q:
         q.put(jsonData)
+    operUrl.close()
     return jsonData
 
 
@@ -52,7 +58,7 @@ def update():
     Sprawdza wersję programu i komunikuje, jeśli jest nowsza wersja
     """
     que = queue.Queue()
-    x = threading.Thread(target=getResponse,
+    x = threading.Thread(target=get_response,
                          args=(que, 'https://api.github.com/repos/Lioheart/Dungeon-Dice/releases/latest'))
     x.start()
     json_data = que.get()
@@ -67,6 +73,15 @@ def update():
     else:
         print('Aktualna wersja')
         print(json_data['tag_name'][1:])
+        return True
+
+
+def updating():
+    """Sprawdza dostępność aktualizacji i wyświelta monit"""
+    if update():
+        title = 'Aktualny'
+        text = 'Brak dostępnej nowej wersji.'
+        NotificationWindow.warning(title, text)
 
 
 if __name__ == '__main__':
