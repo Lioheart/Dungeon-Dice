@@ -33,12 +33,12 @@ class GetJSONTest(unittest.TestCase):
         a = get_response(url='https://api.github.co/users/lioheart')
         self.assertFalse(a)
 
-    def tearDown(self) -> None:
+    def tearDown(self):
         os.remove('test.json')
 
 
 class CompressTest(unittest.TestCase):
-    def setUp(self) -> None:
+    def setUp(self):
         self.original_data = '''
             [32] Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 
             totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, 
@@ -90,7 +90,7 @@ class CompressTest(unittest.TestCase):
         x = gzip_read(outfilename='test.txt')
         self.assertEqual(x, 'Nie znaleziono pliku!')
 
-    def tearDown(self) -> None:
+    def tearDown(self):
         if 'example.txt.gz' in os.listdir():
             os.remove('example.txt.gz')
         if 'Zażółć gęślą jaźń' in os.listdir():

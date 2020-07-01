@@ -8,7 +8,7 @@ from os.path import normpath, join
 from PySide2.QtCore import QSize, Qt
 from PySide2.QtGui import QIcon, QFont, QPalette, QColor, QBrush
 from PySide2.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextBrowser, QPushButton, \
-    QGraphicsDropShadowEffect
+    QGraphicsDropShadowEffect, QListView, QLineEdit, QSizePolicy
 from bs4 import BeautifulSoup
 
 from compress_txt import gzip_read
@@ -21,6 +21,8 @@ class Spells(QWidget):
 
     def __init__(self):
         super().__init__()
+        self.vbox_list = QVBoxLayout()
+        self.hbox_list = QHBoxLayout()
         self.vbox_child = QVBoxLayout()
         self.btn_subback = QPushButton('Cofnij')
         self.btn_list = QPushButton('Lista zaklęć')
@@ -127,10 +129,28 @@ class Spells(QWidget):
 
     def clear_layout(self):
         """
-        Czyści Layuot menu z wszystkich widgetów
+        Czyści Layuot menu z wszystkich widgetów i Layoutów
         """
         for i in reversed(range(self.vbox_child.count())):
-            self.vbox_child.itemAt(i).widget().setParent(None)
+            try:
+                # Usuwa widgety
+                self.vbox_child.itemAt(i).widget().setParent(None)
+            except AttributeError:
+                # Usuwanie widgetów z layoutów list_spell
+                for j in reversed(range(self.hbox_list.count())):
+                    self.hbox_list.itemAt(j).widget().setParent(None)
+                for j in reversed(range(self.vbox_list.count())):
+                    try:
+                        self.vbox_list.itemAt(j).widget().setParent(None)
+                    except AttributeError:
+                        layout_item = self.vbox_list.itemAt(j)
+                        self.vbox_list.removeItem(layout_item)
+                        self.vbox_list.takeAt(j)
+
+                # Usuwa Layouty
+                layout_item = self.vbox_child.itemAt(i)
+                self.vbox_child.removeItem(layout_item)
+                self.vbox_child.takeAt(i)
 
     def subback(self):
         """
@@ -147,7 +167,10 @@ class Spells(QWidget):
         """
         self.vbox_child.addWidget(self.btn_subback)
         for btn in buttons:
-            self.vbox_child.addWidget(btn)
+            if btn.isWidgetType():
+                self.vbox_child.addWidget(btn)
+            else:
+                self.vbox_child.addLayout(btn)
 
     def classes_spells(self):
         """
@@ -264,7 +287,34 @@ class Spells(QWidget):
         Pokazuje listę zaklęć
         :return:
         """
-        pass
+        # Widżety i layouty
+        list_spells = QListView()
+        search = QLineEdit()
+        btn_add = QPushButton('Dodaj')
+        btn_edit = QPushButton('Edytuj')
+        btn_remove = QPushButton('Usuń')
+
+        # Konfiguracja
+        self.hbox_list.addWidget(btn_edit)
+        self.hbox_list.addWidget(btn_remove)
+        self.vbox_list.addWidget(search)
+        self.vbox_list.addWidget(list_spells)
+        self.vbox_list.addWidget(btn_add)
+        self.vbox_list.addLayout(self.hbox_list)
+        size_policy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
+        size_policy.setHeightForWidth(list_spells.sizePolicy().hasHeightForWidth())
+        list_spells.setSizePolicy(size_policy)
+        size_policy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        size_policy.setHeightForWidth(search.sizePolicy().hasHeightForWidth())
+        search.setSizePolicy(size_policy)
+
+        self.submenu_create(self.vbox_list)
+
+        self.text_desc.setText(
+            '''
+            <p>Lista zaklęć</p>
+            '''
+        )
 
     def create_btn_connect(self, path, *args):
         """
@@ -275,8 +325,9 @@ class Spells(QWidget):
         """
         self.submenu_create(*args)
         for i, val in enumerate(args):
-            y = 'btn' + str(i + 1)
-            val.pressed.connect(lambda x=y: self.description_thread(path, x))
+            if val.isWidgetType():
+                y = 'btn' + str(i + 1)
+                val.pressed.connect(lambda x=y: self.description_thread(path, x))
 
     def description_thread(self, path, bs_id=None):
         """
