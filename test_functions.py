@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import unittest
 
 from check_state import get_response
@@ -59,29 +60,31 @@ class CompressTest(unittest.TestCase):
             asperiores repellat.
         '''
 
-    def test_write_lorem(self):
-        gzip_write(self.original_data)
-        self.assertEqual(os.stat('example.txt.gz').st_size, 933)
-
-    def test_read_lorem(self):
+    @unittest.skipUnless(sys.platform.startswith("win"), "requires Windows")
+    def test_write_and_read_lorem_w(self):
         gzip_write(self.original_data)
         x = gzip_read()
         self.assertEqual(x, self.original_data)
+        self.assertEqual(os.stat('example.txt.gz').st_size, 933)
+
+    @unittest.skipUnless(sys.platform.startswith("linux"), "requires Linux")
+    def test_write_and_read_lorem_l(self):
+        gzip_write(self.original_data)
+        x = gzip_read()
+        self.assertEqual(x, self.original_data)
+        self.assertEqual(os.stat('example.txt.gz').st_size, 930)
 
     def test_read_polish(self):
         gzip_write()
         x = gzip_read()
         self.assertEqual(x, 'Zażółć gęślą jaźń\n')
 
-    def test_write_filename(self):
+    def test_write_and_read_filename(self):
         gzip_write(outfilename='Zażółć gęślą jaźń')
-        x = os.listdir()
-        self.assertIn('Zażółć gęślą jaźń', x)
-
-    def test_read_filename(self):
-        gzip_write(outfilename='Zażółć gęślą jaźń')
-        x = gzip_read(outfilename='Zażółć gęślą jaźń')
-        self.assertEqual(x, 'Zażółć gęślą jaźń\n')
+        list_dir = os.listdir()
+        file = gzip_read(outfilename='Zażółć gęślą jaźń')
+        self.assertIn('Zażółć gęślą jaźń', list_dir)
+        self.assertEqual(file, 'Zażółć gęślą jaźń\n')
 
     def test_read_nonexist_file(self):
         x = gzip_read(outfilename='test.txt')

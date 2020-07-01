@@ -88,8 +88,6 @@ class Spells(QWidget):
         self.btn_subback.setIcon(icon)
         icon.addFile('./resources/icons/arrow-left-solid.svg', QSize(), QIcon.Normal, QIcon.Off)
         btn_back.setIcon(icon)
-        # TODO usuń to po wprowadzeniu odpowiednich wartości czarów w bazie danych
-        self.btn_list.setEnabled(False)
         self.text_desc.setViewportMargins(10, 10, 10, 10)
 
         # Ustawianie widoków
@@ -111,6 +109,7 @@ class Spells(QWidget):
         self.btn_arcane.clicked.connect(self.arcane)
         self.btn_divine.clicked.connect(self.divine)
         self.btn_power.clicked.connect(self.power)
+        self.btn_list.clicked.connect(self.list_spells)
 
         self.show()
 
@@ -259,6 +258,13 @@ class Spells(QWidget):
         self.submenu_create()
 
         self.description_thread(path)
+
+    def list_spells(self):
+        """
+        Pokazuje listę zaklęć
+        :return:
+        """
+        pass
 
     def create_btn_connect(self, path, *args):
         """

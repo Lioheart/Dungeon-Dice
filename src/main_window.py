@@ -8,7 +8,7 @@ from PySide2.QtWidgets import QMainWindow, QAction, QWidget, QVBoxLayout, QScrol
 from check_state import updating
 from src.about import Ui_About
 from src.licence import Licence
-from src.spells import Spells
+from src.magic_dnd_35 import Spells
 
 
 class MenuWidget(QWidget):
