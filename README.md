@@ -31,6 +31,9 @@ Program ten w przyszłości będzie zaiwerał spis zaklęć z Podręcznika Gracz
 ## Technologie
 Projekt jest tworzony z wykorzystaniem technologii:
 * PySide2
+* beautifulsoup4
+* SQLAlchemy
+* alembic
 	
 ## Setup
 Aby uruchomić projekt, wykonaj poniższe polecenia:
@@ -58,6 +61,8 @@ Projekt w fazie Alfa.
 ![GitHub repo size](https://img.shields.io/github/repo-size/Lioheart/Dungeon-Dice)
 ![GitHub Releases](https://img.shields.io/github/downloads/Lioheart/Dungeon-Dice/latest/total)
 <a href="https://paypal.me/lioheart"> ![Donate](https://img.shields.io/badge/%24-Dodate-blue) </a>
+
+![Screenshot](https://raw.githubusercontent.com/Lioheart/Dungeon-Dice/master/resources/screens/O%20mnie.PNG)
 
 ## Licencja
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

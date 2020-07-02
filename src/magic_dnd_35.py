@@ -1,17 +1,21 @@
 """Menu Księgi Zaklęć"""
+import ast
 import os
 import queue
 import sys
 import threading
 from os.path import normpath, join
 
+from PySide2 import QtSql
 from PySide2.QtCore import QSize, Qt
-from PySide2.QtGui import QIcon, QFont, QPalette, QColor, QBrush
-from PySide2.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextBrowser, QPushButton, \
-    QGraphicsDropShadowEffect, QListView, QLineEdit, QSizePolicy
+from PySide2.QtGui import QIcon, QPalette, QColor, QBrush, QStandardItemModel, QStandardItem
+from PySide2.QtSql import QSqlDatabase
+from PySide2.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextBrowser, \
+    QGraphicsDropShadowEffect, QListView, QLineEdit, QSizePolicy, QAbstractItemView
 from bs4 import BeautifulSoup
 
 from compress_txt import gzip_read
+from src.ui import ButtonBack, Button, ButtonAdd, ButtonDelete, ButtonEdit
 
 
 class Spells(QWidget):
@@ -24,49 +28,35 @@ class Spells(QWidget):
         self.vbox_list = QVBoxLayout()
         self.hbox_list = QHBoxLayout()
         self.vbox_child = QVBoxLayout()
-        self.btn_subback = QPushButton('Cofnij')
-        self.btn_list = QPushButton('Lista zaklęć')
-        self.btn_class = QPushButton('Zaklęcia poszczególnych klas')
-        self.btn_magic = QPushButton('Rzucanie czarów')
-        self.btn_decript = QPushButton('Opis czarów')
-        self.btn_arcane = QPushButton('Zaklęcia wtajemniczeń - opis')
-        self.btn_divine = QPushButton('Zaklęcia objawień - opis')
-        self.btn_power = QPushButton('Zdolności specjalne')
+        self.btn_subback = ButtonBack('Cofnij')
+        self.btn_list = Button('Lista zaklęć')
+        self.btn_class = Button('Zaklęcia poszczególnych klas')
+        self.btn_magic = Button('Rzucanie czarów')
+        self.btn_decript = Button('Opis czarów')
+        self.btn_arcane = Button('Zaklęcia wtajemniczeń - opis')
+        self.btn_divine = Button('Zaklęcia objawień - opis')
+        self.btn_power = Button('Zdolności specjalne')
         self.text_desc = QTextBrowser()
+        self.db = QSqlDatabase.addDatabase('QSQLITE')
+        self.db.setDatabaseName('dnd3.5.db')
+        self.model = QtSql.QSqlTableModel()
+        self.model.setTable('spells')
+        self.model.select()
         self.initUI()
 
     def initUI(self):
         """
         Inicjuje wygląd
         """
-        # Wygląd
+        # Wygląd okna
         palette = QPalette()
-        palette_back = QPalette()
         shadow = QGraphicsDropShadowEffect(self)
         shadow.setBlurRadius(15)
         shadow.setOffset(0, 0)
         palette.setBrush(QPalette.Active, QPalette.Window, QBrush(QColor(250, 250, 250, 128)))
 
-        # Przyciski nieaktywne
-        palette.setBrush(QPalette.Disabled, QPalette.Button, QBrush(QColor(241, 70, 104, 0)))
-        palette.setBrush(QPalette.Disabled, QPalette.ButtonText, QBrush(QColor(255, 255, 255, 255)))
-
-        # Przyciski aktywne
-        palette.setBrush(QPalette.Active, QPalette.Button, QBrush(QColor(238, 246, 252)))
-        palette.setBrush(QPalette.Inactive, QPalette.Button, QBrush(QColor(255, 255, 255)))
-
-        palette.setBrush(QPalette.Active, QPalette.ButtonText, QBrush(QColor(29, 114, 170)))
-        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, QBrush(QColor(54, 54, 54, 128)))
-
-        # Przyciski cofania
-        palette_back.setBrush(QPalette.Active, QPalette.ButtonText, QBrush(QColor(0, 0, 0, 178)))
-        palette_back.setBrush(QPalette.Inactive, QPalette.ButtonText, QBrush(QColor(0, 0, 0, 50)))
-
-        palette_back.setBrush(QPalette.Active, QPalette.Button, QBrush(QColor('#ffdd57')))
-        palette_back.setBrush(QPalette.Inactive, QPalette.Button, QBrush(QColor('#fff8de')))
-
         # Widzety
-        btn_back = QPushButton('Cofnij do menu')
+        btn_back = ButtonBack('Cofnij do menu')
         icon = QIcon()
 
         # Layouty
@@ -79,13 +69,6 @@ class Spells(QWidget):
         btn_back.setFixedWidth(280)
         self.setPalette(palette)
         self.text_desc.setGraphicsEffect(shadow)
-        self.btn_subback.setPalette(palette_back)
-        btn_back.setPalette(palette_back)
-        font = QFont()
-        font.setFamily('Krub')
-        font.setBold(True)
-        self.btn_subback.setFont(font)
-        btn_back.setFont(font)
         icon.addFile('./resources/icons/undo-alt-solid.svg', QSize(), QIcon.Normal, QIcon.Off)
         self.btn_subback.setIcon(icon)
         icon.addFile('./resources/icons/arrow-left-solid.svg', QSize(), QIcon.Normal, QIcon.Off)
@@ -163,7 +146,7 @@ class Spells(QWidget):
     def submenu_create(self, *buttons):
         """
         Tworzy podmenu
-        @param buttons: QPushButton
+        @param buttons: Button
         """
         self.vbox_child.addWidget(self.btn_subback)
         for btn in buttons:
@@ -178,13 +161,13 @@ class Spells(QWidget):
         """
         self.clear_layout()
 
-        btn_cls1 = QPushButton('Zaklęcia BARDA')
-        btn_cls2 = QPushButton('Zaklęcia CZARODZIEJA/ZAKLINACZA')
-        btn_cls3 = QPushButton('Zaklęcia DRUIDA')
-        btn_cls4 = QPushButton('Zaklęcia KAPŁANA')
-        btn_cls5 = QPushButton('Zaklęcia PALADYNA')
-        btn_cls6 = QPushButton('Zaklęcia TROPICIELA')
-        btn_cls7 = QPushButton('DOMENY KAPŁAŃSKIE')
+        btn_cls1 = Button('Zaklęcia BARDA')
+        btn_cls2 = Button('Zaklęcia CZARODZIEJA/ZAKLINACZA')
+        btn_cls3 = Button('Zaklęcia DRUIDA')
+        btn_cls4 = Button('Zaklęcia KAPŁANA')
+        btn_cls5 = Button('Zaklęcia PALADYNA')
+        btn_cls6 = Button('Zaklęcia TROPICIELA')
+        btn_cls7 = Button('DOMENY KAPŁAŃSKIE')
 
         self.submenu_create(btn_cls1, btn_cls2, btn_cls3, btn_cls4, btn_cls5, btn_cls6, btn_cls7)
 
@@ -197,15 +180,15 @@ class Spells(QWidget):
         path = './resources/descriptions/magic.txt.gz'
         self.clear_layout()
 
-        btn_mag1 = QPushButton('Funkcjonowanie czarowania')
-        btn_mag2 = QPushButton('Wybór czarów')
-        btn_mag3 = QPushButton('Koncentracja')
-        btn_mag4 = QPushButton('Kontrczarowanie')
-        btn_mag5 = QPushButton('Poziom czarującego')
-        btn_mag6 = QPushButton('Nieudane rzucenie zaklęcia')
-        btn_mag7 = QPushButton('Wyniki działania czaru')
-        btn_mag8 = QPushButton('Specjalne efekty czarów')
-        btn_mag9 = QPushButton('Łączenie efektów magicznych')
+        btn_mag1 = Button('Funkcjonowanie czarowania')
+        btn_mag2 = Button('Wybór czarów')
+        btn_mag3 = Button('Koncentracja')
+        btn_mag4 = Button('Kontrczarowanie')
+        btn_mag5 = Button('Poziom czarującego')
+        btn_mag6 = Button('Nieudane rzucenie zaklęcia')
+        btn_mag7 = Button('Wyniki działania czaru')
+        btn_mag8 = Button('Specjalne efekty czarów')
+        btn_mag9 = Button('Łączenie efektów magicznych')
 
         self.create_btn_connect(path, btn_mag1, btn_mag2, btn_mag3, btn_mag4, btn_mag5, btn_mag6, btn_mag7, btn_mag8,
                                 btn_mag9)
@@ -219,18 +202,18 @@ class Spells(QWidget):
         path = './resources/descriptions/desc_magic.txt.gz'
         self.clear_layout()
 
-        btn_desc1 = QPushButton('Nazwa')
-        btn_desc2 = QPushButton('Szkoła (Podszkoła)')
-        btn_desc3 = QPushButton('[Określnik]')
-        btn_desc4 = QPushButton('Poziom')
-        btn_desc5 = QPushButton('Komponenty')
-        btn_desc6 = QPushButton('Czas rzucania')
-        btn_desc7 = QPushButton('Zasięg')
-        btn_desc8 = QPushButton('Celowanie czarem')
-        btn_desc9 = QPushButton('Czas działania')
-        btn_desc10 = QPushButton('Rzut obronny')
-        btn_desc11 = QPushButton('Odporność na czary')
-        btn_desc12 = QPushButton('Opis działania')
+        btn_desc1 = Button('Nazwa')
+        btn_desc2 = Button('Szkoła (Podszkoła)')
+        btn_desc3 = Button('[Określnik]')
+        btn_desc4 = Button('Poziom')
+        btn_desc5 = Button('Komponenty')
+        btn_desc6 = Button('Czas rzucania')
+        btn_desc7 = Button('Zasięg')
+        btn_desc8 = Button('Celowanie czarem')
+        btn_desc9 = Button('Czas działania')
+        btn_desc10 = Button('Rzut obronny')
+        btn_desc11 = Button('Odporność na czary')
+        btn_desc12 = Button('Opis działania')
 
         self.create_btn_connect(path, btn_desc1, btn_desc2, btn_desc3, btn_desc4, btn_desc5, btn_desc6, btn_desc7,
                                 btn_desc8, btn_desc9, btn_desc10, btn_desc11, btn_desc12)
@@ -249,9 +232,9 @@ class Spells(QWidget):
         path = './resources/descriptions/arcane.txt.gz'
         self.clear_layout()
 
-        btn_arc1 = QPushButton('Jak czarodziej przygotowuje zaklęcia')
-        btn_arc2 = QPushButton('Magiczne zapiski wtajemniczeń')
-        btn_arc3 = QPushButton('Zaklinacze i bardowie')
+        btn_arc1 = Button('Jak czarodziej przygotowuje zaklęcia')
+        btn_arc2 = Button('Magiczne zapiski wtajemniczeń')
+        btn_arc3 = Button('Zaklinacze i bardowie')
 
         self.create_btn_connect(path, btn_arc1, btn_arc2, btn_arc3)
 
@@ -264,9 +247,9 @@ class Spells(QWidget):
         path = './resources/descriptions/divine.txt.gz'
         self.clear_layout()
 
-        btn_div1 = QPushButton('Jak przygotowuje się zaklęcia objawień')
-        btn_div2 = QPushButton('Magiczne zapiski objawień')
-        btn_div3 = QPushButton('Nowe czary objawień')
+        btn_div1 = Button('Jak przygotowuje się zaklęcia objawień')
+        btn_div2 = Button('Magiczne zapiski objawień')
+        btn_div3 = Button('Nowe czary objawień')
 
         self.create_btn_connect(path, btn_div1, btn_div2, btn_div3)
         self.description_thread(path, 'description')
@@ -282,17 +265,29 @@ class Spells(QWidget):
 
         self.description_thread(path)
 
+    def buttonClicked(self):
+        if Qt.RightButton:
+            print(self.sender().toolTip())
+
     def list_spells(self):
         """
         Pokazuje listę zaklęć
-        :return:
         """
         # Widżety i layouty
         list_spells = QListView()
         search = QLineEdit()
-        btn_add = QPushButton('Dodaj')
-        btn_edit = QPushButton('Edytuj')
-        btn_remove = QPushButton('Usuń')
+        btn_add = ButtonAdd('Dodaj')
+        btn_edit = ButtonEdit('Edytuj')
+        btn_remove = ButtonDelete('Usuń')
+
+        # Ustawianie modelu dla listy
+        model = QStandardItemModel(list_spells)
+        for row in range(self.model.rowCount()):
+            name = self.model.data(self.model.index(row, 1))
+            model.appendRow(QStandardItem(name))
+        list_spells.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        list_spells.setModel(model)
+        list_spells.clicked.connect(self.on_item_clicked)
 
         # Konfiguracja
         self.hbox_list.addWidget(btn_edit)
@@ -310,18 +305,125 @@ class Spells(QWidget):
 
         self.submenu_create(self.vbox_list)
 
-        self.text_desc.setText(
-            '''
-            <p>Lista zaklęć</p>
-            '''
-        )
+        self.text_desc.setText('''<p>Lista zaklęć</p>''')
+
+    def on_item_clicked(self, item):
+        """
+        Wyświetla dane z bazy, zależnie od klikniętego czaru.
+        :param item: QModel
+        """
+        self.model.setFilter("name LIKE '%{}%'".format(item.data()))
+        self.model.select()
+
+        # Ustalanie danych
+        title = self.model.data(self.model.index(0, 1))
+        source_book = self.model.data(self.model.index(0, 2))
+        source_page = self.model.data(self.model.index(0, 3))
+        school = self.model.data(self.model.index(0, 4))
+        sub_school = self.model.data(self.model.index(0, 5))
+        descriptor = self.model.data(self.model.index(0, 6))
+        class_lvl = ast.literal_eval(self.model.data(self.model.index(0, 7)))
+        components = self.model.data(self.model.index(0, 8))
+        casting_time = self.model.data(self.model.index(0, 9))
+        range_spell = self.model.data(self.model.index(0, 10))
+        magic_targeting = ast.literal_eval(self.model.data(self.model.index(0, 11)))
+        for x, y in magic_targeting.items():
+            mt_keys, mt_values = x, y
+        duration = self.model.data(self.model.index(0, 12))
+        saving_throw = self.model.data(self.model.index(0, 13))
+        resistance = self.model.data(self.model.index(0, 14))
+        description = self.model.data(self.model.index(0, 17))
+        try:
+            focus = ast.literal_eval(self.model.data(self.model.index(0, 15)) or None)
+            for x, y in focus.items():
+                f_keys, f_values = x, y
+        except ValueError:
+            f_keys, f_values = 'Koncentrator', 'Brak'
+
+        # Modyfikowanie danych
+        source_book += ', str.' + source_page
+        if sub_school:
+            school += ' (' + sub_school + ')'
+        if descriptor:
+            school += ' [' + descriptor + ']'
+        class_lvl = list(class_lvl.items())
+        class_lvl_spell = ''
+        if len(class_lvl) > 1:
+            for value in class_lvl:
+                for result in value:
+                    class_lvl_spell += str(result) + ' '
+                class_lvl_spell += ', '
+            class_lvl_spell = class_lvl_spell[:-2]
+        else:
+            class_lvl_spell += str(class_lvl[0][0]) + str(class_lvl[0][1])
+
+        # Tworzenie tekstu do wyświetlenia
+        full_text = '''
+        <html>
+            <body>
+                <table width=100%>
+                    <tr>
+                        <td ><h1>{}</h1></td>
+                        <td align="right">{}</td>
+                    </tr>
+                </table>
+                <div>
+                    <p><small>{}</small></p>
+                <p>
+                    <strong>Poziom:</strong>
+                    {}
+                </p>
+                <p>
+                    <strong>Komponenty:</strong>
+                    {}
+                </p>
+                <p>
+                    <strong>Czas rzucania:</strong>
+                    {}
+                </p>
+                <p>
+                    <strong>Zasięg:</strong>
+                    {}
+                </p>
+                <p>
+                    <strong>{}:</strong>
+                    {}
+                </p>
+                <p>
+                    <strong>Czas działania:</strong>
+                    {}
+                </p>
+                <p>
+                    <strong>Rzut obronny:</strong>
+                    {}
+                </p>
+                <p>
+                    <strong>Odporność na czary:</strong>
+                    {}
+                </p>
+                <p>
+                    <em>{}:</em>
+                    {}
+                </p>
+                </div>
+                <p style="-qt-paragraph-type:empty; margin-top:15px; margin-bottom:15px; margin-left:0px; 
+                margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;"><br /></p>
+                <div> 
+                    {}
+                </div>
+            </body>
+        </html>
+        '''.format(title, source_book, school, class_lvl_spell, components, casting_time, range_spell, mt_keys,
+                   mt_values, duration, saving_throw, resistance, f_keys, f_values, description)
+
+        self.text_desc.setText(full_text)
 
     def create_btn_connect(self, path, *args):
         """
         Służy do utworzenia odpowiednich powiązań z przyciskami podmenu. Wymaga ścieżki do pliku z danym opisem
-        oraz argumentów w postaci przycisków QPushButton
+        oraz argumentów w postaci przycisków Button
         :param path: ścieżka do pliku z opisem
-        :param args: przyciski QPushButton
+        :param args: przyciski Button
         """
         self.submenu_create(*args)
         for i, val in enumerate(args):

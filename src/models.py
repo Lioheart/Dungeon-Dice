@@ -27,6 +27,7 @@ class Spells(Base):
     duration = Column(String)               # Czas działania
     saving_throw = Column(String)           # Rzut obronny
     resistance = Column(String)             # Odporność na czary
+    focus = Column(String)                  # Koncentrator (JSON)
     descriptor_short = Column(String)       # Opis (krótki)
     descriptor_long = Column(String)        # Opis (długi)
     timestamp = Column(DateTime, onupdate=datetime.datetime.now)
