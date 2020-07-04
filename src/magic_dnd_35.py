@@ -15,6 +15,7 @@ from PySide2.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, Q
 from bs4 import BeautifulSoup
 
 from compress_txt import gzip_read
+from src.add_spells_35 import AddSpells
 from src.ui import ButtonBack, Button, ButtonAdd, ButtonDelete, ButtonEdit
 
 
@@ -25,6 +26,9 @@ class Spells(QWidget):
 
     def __init__(self):
         super().__init__()
+        self.add_new = AddSpells()
+        self.btn_remove = ButtonDelete('Usuń')
+        self.btn_edit = ButtonEdit('Edytuj')
         self.vbox_list = QVBoxLayout()
         self.hbox_list = QHBoxLayout()
         self.vbox_child = QVBoxLayout()
@@ -265,10 +269,6 @@ class Spells(QWidget):
 
         self.description_thread(path)
 
-    def buttonClicked(self):
-        if Qt.RightButton:
-            print(self.sender().toolTip())
-
     def list_spells(self):
         """
         Pokazuje listę zaklęć
@@ -277,21 +277,23 @@ class Spells(QWidget):
         list_spells = QListView()
         search = QLineEdit()
         btn_add = ButtonAdd('Dodaj')
-        btn_edit = ButtonEdit('Edytuj')
-        btn_remove = ButtonDelete('Usuń')
 
         # Ustawianie modelu dla listy
-        model = QStandardItemModel(list_spells)
+        self.model.setTable('spells')
+        self.model.select()
+        model_list = QStandardItemModel(list_spells)
         for row in range(self.model.rowCount()):
             name = self.model.data(self.model.index(row, 1))
-            model.appendRow(QStandardItem(name))
+            model_list.appendRow(QStandardItem(name))
         list_spells.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        list_spells.setModel(model)
+        list_spells.setModel(model_list)
         list_spells.clicked.connect(self.on_item_clicked)
 
         # Konfiguracja
-        self.hbox_list.addWidget(btn_edit)
-        self.hbox_list.addWidget(btn_remove)
+        self.btn_edit.setEnabled(False)
+        self.btn_remove.setEnabled(False)
+        self.hbox_list.addWidget(self.btn_edit)
+        self.hbox_list.addWidget(self.btn_remove)
         self.vbox_list.addWidget(search)
         self.vbox_list.addWidget(list_spells)
         self.vbox_list.addWidget(btn_add)
@@ -303,6 +305,9 @@ class Spells(QWidget):
         size_policy.setHeightForWidth(search.sizePolicy().hasHeightForWidth())
         search.setSizePolicy(size_policy)
 
+        # Signal and slots
+        btn_add.clicked.connect(lambda: self.add_new.show())
+
         self.submenu_create(self.vbox_list)
 
         self.text_desc.setText('''<p>Lista zaklęć</p>''')
@@ -312,6 +317,8 @@ class Spells(QWidget):
         Wyświetla dane z bazy, zależnie od klikniętego czaru.
         :param item: QModel
         """
+        self.btn_edit.setEnabled(True)
+        self.btn_remove.setEnabled(True)
         self.model.setFilter("name LIKE '%{}%'".format(item.data()))
         self.model.select()
 

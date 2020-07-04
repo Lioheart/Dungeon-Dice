@@ -1,6 +1,23 @@
-"""Wygląd poszczególnych przycisków"""
+"""Wygląd poszczególnych przycisków """
 from PySide2.QtGui import QPalette, QBrush, QColor, QFont
-from PySide2.QtWidgets import QPushButton
+from PySide2.QtWidgets import QPushButton, QDialogButtonBox, QComboBox
+
+
+def palette_global():
+    palette = QPalette()
+
+    # Przyciski nieaktywne
+    palette.setBrush(QPalette.Disabled, QPalette.Button, QBrush(QColor(241, 70, 104, 0)))
+    palette.setBrush(QPalette.Disabled, QPalette.ButtonText, QBrush(QColor(255, 255, 255, 255)))
+
+    # Przyciski aktywne
+    palette.setBrush(QPalette.Active, QPalette.Button, QBrush(QColor(238, 246, 252)))
+    palette.setBrush(QPalette.Inactive, QPalette.Button, QBrush(QColor(255, 255, 255)))
+
+    palette.setBrush(QPalette.Active, QPalette.ButtonText, QBrush(QColor(29, 114, 170)))
+    palette.setBrush(QPalette.Inactive, QPalette.ButtonText, QBrush(QColor(54, 54, 54, 128)))
+
+    return palette
 
 
 class ButtonBack(QPushButton):
@@ -27,24 +44,12 @@ class Button(QPushButton):
     def __init__(self, title):
         super().__init__()
         self.setText(title)
-        palette = QPalette()
-
-        # Przyciski nieaktywne
-        palette.setBrush(QPalette.Disabled, QPalette.Button, QBrush(QColor(241, 70, 104, 0)))
-        palette.setBrush(QPalette.Disabled, QPalette.ButtonText, QBrush(QColor(255, 255, 255, 255)))
-
-        # Przyciski aktywne
-        palette.setBrush(QPalette.Active, QPalette.Button, QBrush(QColor(238, 246, 252)))
-        palette.setBrush(QPalette.Inactive, QPalette.Button, QBrush(QColor(255, 255, 255)))
-
-        palette.setBrush(QPalette.Active, QPalette.ButtonText, QBrush(QColor(29, 114, 170)))
-        palette.setBrush(QPalette.Inactive, QPalette.ButtonText, QBrush(QColor(54, 54, 54, 128)))
-
+        palette = palette_global()
         self.setPalette(palette)
 
 
 class ButtonAdd(QPushButton):
-    def __init__(self, title):
+    def __init__(self, title='Dodaj'):
         super().__init__()
         self.setText(title)
         palette = QPalette()
@@ -64,7 +69,7 @@ class ButtonAdd(QPushButton):
 
 
 class ButtonDelete(QPushButton):
-    def __init__(self, title):
+    def __init__(self, title='Usuń'):
         super().__init__()
         self.setText(title)
         palette = QPalette()
@@ -80,7 +85,7 @@ class ButtonDelete(QPushButton):
 
 
 class ButtonEdit(QPushButton):
-    def __init__(self, title):
+    def __init__(self, title='Edytuj'):
         super().__init__()
         self.setText(title)
         palette = QPalette()
@@ -92,4 +97,18 @@ class ButtonEdit(QPushButton):
         palette.setBrush(QPalette.Active, QPalette.Button, QBrush(QColor('#2EABBF')))
         palette.setBrush(QPalette.Inactive, QPalette.Button, QBrush(QColor('#D0ECF0')))
 
+        self.setPalette(palette)
+
+
+class DialogButton(QDialogButtonBox):
+    def __init__(self):
+        super().__init__()
+        palette = palette_global()
+        self.setPalette(palette)
+
+
+class ComboBox(QComboBox):
+    def __init__(self):
+        super().__init__()
+        palette = palette_global()
         self.setPalette(palette)

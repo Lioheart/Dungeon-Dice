@@ -18,6 +18,7 @@ class Licence(QWidget):
 
     def __init__(self):
         super().__init__()
+        self.setWindowTitle('Licencja Otwartej Gry')
         self.initUI()
 
     def initUI(self):
