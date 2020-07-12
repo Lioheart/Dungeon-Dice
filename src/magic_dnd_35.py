@@ -1,5 +1,6 @@
 """Menu Księgi Zaklęć"""
 import ast
+import datetime
 import os
 import queue
 import sys
@@ -7,11 +8,11 @@ import threading
 from os.path import normpath, join
 
 from PySide2 import QtSql
-from PySide2.QtCore import QSize, Qt
+from PySide2.QtCore import QSize, Qt, QPersistentModelIndex, QModelIndex
 from PySide2.QtGui import QIcon, QPalette, QColor, QBrush, QStandardItemModel, QStandardItem
-from PySide2.QtSql import QSqlDatabase
+from PySide2.QtSql import QSqlDatabase, QSqlQuery
 from PySide2.QtWidgets import QWidget, QApplication, QVBoxLayout, QHBoxLayout, QTextBrowser, \
-    QGraphicsDropShadowEffect, QListView, QLineEdit, QSizePolicy, QAbstractItemView
+    QGraphicsDropShadowEffect, QListView, QLineEdit, QSizePolicy, QAbstractItemView, QMessageBox
 from bs4 import BeautifulSoup
 
 from compress_txt import gzip_read
@@ -26,7 +27,8 @@ class Spells(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.add_new = AddSpells()
+        self.list_spells = QListView()
+        self.add_new = AddSpells(self)
         self.btn_remove = ButtonDelete('Usuń')
         self.btn_edit = ButtonEdit('Edytuj')
         self.vbox_list = QVBoxLayout()
@@ -46,6 +48,7 @@ class Spells(QWidget):
         self.model = QtSql.QSqlTableModel()
         self.model.setTable('spells')
         self.model.select()
+        self.i = self.model.rowCount()
         self.initUI()
 
     def initUI(self):
@@ -98,7 +101,7 @@ class Spells(QWidget):
         self.btn_arcane.clicked.connect(self.arcane)
         self.btn_divine.clicked.connect(self.divine)
         self.btn_power.clicked.connect(self.power)
-        self.btn_list.clicked.connect(self.list_spells)
+        self.btn_list.clicked.connect(self.listing_spells)
 
         self.show()
 
@@ -269,25 +272,30 @@ class Spells(QWidget):
 
         self.description_thread(path)
 
-    def list_spells(self):
+    def model_list(self):
+        """
+        Odświeża listę zaklęć
+        """
+        self.model.setTable('spells')
+        self.model.select()
+        model_list = QStandardItemModel(self.list_spells)
+        for row in range(self.model.rowCount()):
+            name = self.model.data(self.model.index(row, 1))
+            model_list.appendRow(QStandardItem(name))
+        self.list_spells.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.list_spells.setModel(model_list)
+        self.list_spells.clicked.connect(self.on_item_clicked)
+
+    def listing_spells(self):
         """
         Pokazuje listę zaklęć
         """
         # Widżety i layouty
-        list_spells = QListView()
         search = QLineEdit()
         btn_add = ButtonAdd('Dodaj')
 
         # Ustawianie modelu dla listy
-        self.model.setTable('spells')
-        self.model.select()
-        model_list = QStandardItemModel(list_spells)
-        for row in range(self.model.rowCount()):
-            name = self.model.data(self.model.index(row, 1))
-            model_list.appendRow(QStandardItem(name))
-        list_spells.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        list_spells.setModel(model_list)
-        list_spells.clicked.connect(self.on_item_clicked)
+        self.model_list()
 
         # Konfiguracja
         self.btn_edit.setEnabled(False)
@@ -295,22 +303,51 @@ class Spells(QWidget):
         self.hbox_list.addWidget(self.btn_edit)
         self.hbox_list.addWidget(self.btn_remove)
         self.vbox_list.addWidget(search)
-        self.vbox_list.addWidget(list_spells)
+        self.vbox_list.addWidget(self.list_spells)
         self.vbox_list.addWidget(btn_add)
         self.vbox_list.addLayout(self.hbox_list)
         size_policy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
-        size_policy.setHeightForWidth(list_spells.sizePolicy().hasHeightForWidth())
-        list_spells.setSizePolicy(size_policy)
+        size_policy.setHeightForWidth(self.list_spells.sizePolicy().hasHeightForWidth())
+        self.list_spells.setSizePolicy(size_policy)
         size_policy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
         size_policy.setHeightForWidth(search.sizePolicy().hasHeightForWidth())
         search.setSizePolicy(size_policy)
 
         # Signal and slots
         btn_add.clicked.connect(lambda: self.add_new.show())
+        self.btn_remove.clicked.connect(self.remove_spell)
 
         self.submenu_create(self.vbox_list)
 
         self.text_desc.setText('''<p>Lista zaklęć</p>''')
+
+    def remove_spell(self):
+        if self.list_spells.currentIndex().row() > -1:
+            query_string = 'DELETE FROM spells WHERE name="{}";'.format(self.list_spells.currentIndex().data())
+            query = QSqlQuery()
+            query.prepare(query_string)
+            query.exec_()
+            self.model.setQuery(query)
+            self.model_list()
+            self.i = self.model.rowCount()
+        else:
+            QMessageBox.warning(self, 'Uwaga', "Proszę wybrać zaklęcie zanim dokonasz usunięcia", QMessageBox.Ok)
+            self.show()
+
+    def add_new_spell(self, data):
+        """
+        Funkcja ta wprowadza nowe zaklęcie do bazy danych. Jest to funkcja wywoływana
+        tylko poprzez wewnętrzną klasę.
+        :param data: Dane zaklęcia do bazy
+        """
+        if data[0]:
+            self.model.insertRows(self.i, 1)
+            for col in range(1, self.model.columnCount() - 1):
+                self.model.setData(self.model.index(self.i, col), data[col - 1])
+            self.model.setData(self.model.index(self.i, self.model.columnCount()), datetime.datetime.utcnow)
+            self.model.submitAll()
+
+            self.model_list()
 
     def on_item_clicked(self, item):
         """
@@ -454,6 +491,9 @@ class Spells(QWidget):
             text = str(soup.find('div', id=bs_id))
         self.text_desc.setHtml(text)
 
+    def closeEvent(self, QCloseEvent):
+        """Zamyka łącze do bazy"""
+        self.db.close()
 
 if __name__ == '__main__':
     os.chdir(normpath(join(os.getcwd(), '..\\')))
